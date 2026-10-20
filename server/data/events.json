@@ -1,0 +1,561 @@
+[
+  {
+    "id": "evt_wedding_demo",
+    "name": "Ananya & Kabir’s Ethereal Garden Wedding",
+    "eventType": "wedding",
+    "date": "2027-02-14",
+    "location": "Meadowood Courtyard & Glasshouse, Bangalore",
+    "guestCount": 150,
+    "setting": "outdoor",
+    "duration": "2 Days",
+    "priorities": [
+      "Atmosphere & Decor",
+      "Catering & Dining",
+      "Photography & Cinema"
+    ],
+    "atmosphereVision": "Dreamy twilight botanical celebration with warm cascading fairy lanterns, velvet textiles, and raw floral arches.",
+    "eventConcept": {
+      "title": "Botanical Twilight Romance",
+      "description": "An enchanted open-air celebration harmonizing lush verdant foliage, soft lavender candle clusters, and warm golden acoustic melodies under the starlight.",
+      "theme": "Enchanted Starlight Garden",
+      "style": "Modern Romantic Chic",
+      "colorPalette": [
+        "#7655E8",
+        "#EDE6FF",
+        "#FF7C91",
+        "#FFFCF7",
+        "#C5B4FF"
+      ],
+      "creativeDirection": "Contrast deep violet twilight florals against soft ivory linens. Ground seating with layered antique rugs, hanging glass terrariums, and acoustic string quartets."
+    },
+    "budget": {
+      "currency": "INR",
+      "totalBudget": 1500000,
+      "allocations": [
+        {
+          "category": "Venue & Glasshouse Reservation",
+          "amount": 480000,
+          "reason": "Exclusivity for 48 hours, bridal suite and catering prep lawn",
+          "actualCost": 450000
+        },
+        {
+          "category": "Artisanal Catering & Beverage Bar",
+          "amount": 450000,
+          "reason": "Multi-regional fusion dinner, mocktail laboratory, and late-night street food stalls",
+          "actualCost": 420000
+        },
+        {
+          "category": "Documentary Photography & Cinema",
+          "amount": 220000,
+          "reason": "Two lead photographers, drone coverage, and same-day highlight reel",
+          "actualCost": 220000
+        },
+        {
+          "category": "Floral Installations & Ambiance",
+          "amount": 200000,
+          "reason": "Wildflower arches, micro-pendant fairy chandeliers, and dining tablescapes",
+          "actualCost": 180000
+        },
+        {
+          "category": "Live Music & Sound Engineering",
+          "amount": 150000,
+          "reason": "Ceremony harpist, evening jazz quintet, and professional sound amplification",
+          "actualCost": 0
+        }
+      ]
+    },
+    "timeline": [
+      {
+        "id": "tml_w1",
+        "title": "Confirm Glasshouse Venue Contract & Escrow Deposit",
+        "description": "Lock in load-in windows and noise waiver agreements",
+        "dueDate": "2026-11-15",
+        "priority": "high",
+        "category": "Venue",
+        "completed": true
+      },
+      {
+        "id": "tml_w2",
+        "title": "Curate 5-Course Tasting Menu with Caterer",
+        "description": "Review vegan alternatives and signature welcome spritzers",
+        "dueDate": "2026-12-05",
+        "priority": "high",
+        "category": "Catering",
+        "completed": true
+      },
+      {
+        "id": "tml_w3",
+        "title": "Dispatch Digital RSVP Portals to Guests",
+        "description": "Include accommodations guide and dietary preference forms",
+        "dueDate": "2026-12-20",
+        "priority": "medium",
+        "category": "Guests",
+        "completed": false
+      },
+      {
+        "id": "tml_w4",
+        "title": "Floral Mockup & Table Linen Approval",
+        "description": "Inspect mockup table setting under simulated evening lights",
+        "dueDate": "2027-01-10",
+        "priority": "medium",
+        "category": "Decor",
+        "completed": false
+      },
+      {
+        "id": "tml_w5",
+        "title": "Final Technical Run-through & Audio Check",
+        "description": "Test drone coordinates and sound coverage across garden zones",
+        "dueDate": "2027-02-10",
+        "priority": "high",
+        "category": "Operations",
+        "completed": false
+      }
+    ],
+    "vendorChecklist": [
+      {
+        "id": "vnd_w1",
+        "category": "Venue & Architecture",
+        "tasks": [
+          "Verify generator power backup capacity",
+          "Inspect wet-weather glasshouse contingency",
+          "Review dressing room security lockers"
+        ],
+        "questionsToAsk": [
+          "What is the hard sound cutoff hour?",
+          "Are sparkler exits permitted on the courtyard lawn?"
+        ],
+        "status": "confirmed",
+        "notes": "Deposit paid. Contact: Raghav (+91 98450 11223)",
+        "quotedAmount": 480000
+      },
+      {
+        "id": "vnd_w2",
+        "category": "Catering & Mixology",
+        "tasks": [
+          "Finalize children menu option",
+          "Arrange vendor meal boxes for photo crew",
+          "Schedule bar ice delivery truck"
+        ],
+        "questionsToAsk": [
+          "Do you supply biodegradable bamboo tableware for street food counters?",
+          "What is the server-to-guest ratio?"
+        ],
+        "status": "negotiating",
+        "notes": "Tasting scheduled next Tuesday.",
+        "quotedAmount": 450000
+      },
+      {
+        "id": "vnd_w3",
+        "category": "Photography & Film",
+        "tasks": [
+          "Submit VIP family shot list",
+          "Confirm dual-SD card backup workflow",
+          "Coordinate sunset portrait timing with coordinator"
+        ],
+        "questionsToAsk": [
+          "Do you carry third-party liability insurance?",
+          "How are raw footage files archived?"
+        ],
+        "status": "confirmed",
+        "notes": "Signed agreement with Lumière Studios.",
+        "quotedAmount": 220000
+      }
+    ],
+    "personalizedIdeas": [
+      {
+        "id": "pid_w1",
+        "title": "Vintage Audio Guestbook Telephone",
+        "description": "A customized 1960s rotary telephone where guests record spoken wishes after the ceremony.",
+        "category": "Guest Experience",
+        "estimatedCost": 35000,
+        "reason": "Captures the raw laughter and emotional voices of grandparents and friends forever.",
+        "isFavorite": true
+      },
+      {
+        "id": "pid_w2",
+        "title": "Hand-Lettered Botanical Terrarium Seating Chart",
+        "description": "Individual miniature moss terrariums with gold-ink calligraphy escort cards guests take home.",
+        "category": "Decor & Keepsake",
+        "estimatedCost": 25000,
+        "reason": "Doubles as an organic focal entry installation and bespoke party favor.",
+        "isFavorite": true
+      },
+      {
+        "id": "pid_w3",
+        "title": "Midnight Masala Chai & Churro Cart",
+        "description": "A warm mobile artisanal cart rolling out at 11:30 PM offering spiced cardamom tea and hot pastries.",
+        "category": "Late-Night Culinary",
+        "estimatedCost": 20000,
+        "reason": "Revitalizes guests on the dance floor and leaves an unforgettable cozy memory.",
+        "isFavorite": false
+      }
+    ],
+    "risks": [
+      {
+        "description": "Sudden evening dew dampening open garden grass",
+        "mitigation": "Install elevated wooden duckboard runners between ceremony lawn and dining pavilions."
+      },
+      {
+        "description": "Guest parking bottlenecks along narrow approach lane",
+        "mitigation": "Hire dedicated valet team with off-site shuttle bay 300 meters away."
+      }
+    ],
+    "nextActions": [
+      "Finalize custom menu tasting with chef",
+      "Follow up on 24 pending guest RSVP notifications",
+      "Sign off on floral arch mockups with botanical team"
+    ],
+    "guests": [
+      {
+        "id": "gst_1",
+        "name": "Rohan Sharma",
+        "email": "rohan.s@example.com",
+        "rsvpStatus": "attending",
+        "dietaryNotes": "Vegetarian",
+        "accessibilityNeeds": "",
+        "tableOrGroup": "Table 1 - Family"
+      },
+      {
+        "id": "gst_2",
+        "name": "Meera Patel",
+        "email": "meera.p@example.com",
+        "rsvpStatus": "attending",
+        "dietaryNotes": "Gluten-free",
+        "accessibilityNeeds": "Wheelchair access preferred",
+        "tableOrGroup": "Table 2 - College Friends"
+      },
+      {
+        "id": "gst_3",
+        "name": "Vikram Sengupta",
+        "email": "vikram.sg@example.com",
+        "rsvpStatus": "pending",
+        "dietaryNotes": "",
+        "accessibilityNeeds": "",
+        "tableOrGroup": "Table 2 - College Friends"
+      },
+      {
+        "id": "gst_4",
+        "name": "Ananya Roy",
+        "email": "ananya.roy@example.com",
+        "rsvpStatus": "declined",
+        "dietaryNotes": "",
+        "accessibilityNeeds": "",
+        "tableOrGroup": "Table 3"
+      }
+    ],
+    "createdAt": "2026-10-26T17:51:24.781Z",
+    "updatedAt": "2026-10-26T17:51:24.782Z"
+  },
+  {
+    "id": "evt_birthday_demo",
+    "name": "Aarav’s 30th Solar Odyssey Birthday",
+    "eventType": "birthday",
+    "date": "2026-11-28",
+    "location": "Skyline Terrace Lounge, Mumbai",
+    "guestCount": 65,
+    "setting": "indoor",
+    "duration": "6 Hours",
+    "priorities": [
+      "Music & DJ",
+      "Interactive Culinary Stations",
+      "Visual Art & Decor"
+    ],
+    "atmosphereVision": "Vibrant neon-infused cosmic party with interactive projection mapping, craft cocktail flights, and electric basslines.",
+    "eventConcept": {
+      "title": "Retro-Futuristic Cosmic Odyssey",
+      "description": "A multi-sensory celebration celebrating three decades under the stars with sculptural metallic installations, bespoke ambient lighting, and high-energy music.",
+      "theme": "Celestial Gold & Cyber Violet",
+      "style": "Futuristic High-Energy Glamour",
+      "colorPalette": [
+        "#FF7C91",
+        "#7655E8",
+        "#FFB800",
+        "#100E18",
+        "#EDE6FF"
+      ],
+      "creativeDirection": "Infuse high-gloss chrome balloons, iridescent acrylic menus, UV reactive mocktail garnishes, and dynamic synthwave-to-disco sound transitions."
+    },
+    "budget": {
+      "currency": "INR",
+      "totalBudget": 450000,
+      "allocations": [
+        {
+          "category": "Rooftop Lounge Rental & Staff",
+          "amount": 160000,
+          "reason": "Panoramic city views, private bar, and sound license",
+          "actualCost": 150000
+        },
+        {
+          "category": "Craft Small Plates & Cocktail Flights",
+          "amount": 150000,
+          "reason": "Gourmet slider bar, dim sum station, and custom birthday mixology",
+          "actualCost": 140000
+        },
+        {
+          "category": "Headline DJ & Kinetic Lighting",
+          "amount": 70000,
+          "reason": "4-hour live club set and programmed moving-head beam fixtures",
+          "actualCost": 0
+        },
+        {
+          "category": "Sculptural Balloon & Holographic Decor",
+          "amount": 50000,
+          "reason": "Statement photo portal and floating chrome metallic orbs",
+          "actualCost": 45000
+        },
+        {
+          "category": "Custom Geometric Cake & Favors",
+          "amount": 20000,
+          "reason": "2-tier dark chocolate galaxy glaze cake with sparkler candles",
+          "actualCost": 18000
+        }
+      ]
+    },
+    "timeline": [
+      {
+        "id": "tml_b1",
+        "title": "Lock Rooftop Terrace & Deposit",
+        "description": "Confirm private audio permit until 1:00 AM",
+        "dueDate": "2026-10-15",
+        "priority": "high",
+        "category": "Venue",
+        "completed": true
+      },
+      {
+        "id": "tml_b2",
+        "title": "Collaborate with DJ on High-Energy Tracklist",
+        "description": "Curate nostalgic 2000s classics and modern electronic edits",
+        "dueDate": "2026-11-05",
+        "priority": "medium",
+        "category": "Entertainment",
+        "completed": true
+      },
+      {
+        "id": "tml_b3",
+        "title": "Finalize Custom Cocktail Recipe Names",
+        "description": "Name signature drinks after pivotal life milestones",
+        "dueDate": "2026-11-12",
+        "priority": "low",
+        "category": "Catering",
+        "completed": false
+      },
+      {
+        "id": "tml_b4",
+        "title": "Deliver Sparkler Candles & Cake to Venue",
+        "description": "Coordinate safe refrigeration with head bartender",
+        "dueDate": "2026-11-28",
+        "priority": "high",
+        "category": "Logistics",
+        "completed": false
+      }
+    ],
+    "vendorChecklist": [
+      {
+        "id": "vnd_b1",
+        "category": "Venue & Bar",
+        "tasks": [
+          "Confirm ice machine supply",
+          "Test wireless microphone for speeches",
+          "Verify coat check and elevator access"
+        ],
+        "questionsToAsk": [
+          "Can we project visuals on the back terrace wall?"
+        ],
+        "status": "confirmed",
+        "notes": "Contact: Alisha (+91 99201 44556)",
+        "quotedAmount": 160000
+      },
+      {
+        "id": "vnd_b2",
+        "category": "DJ & Sound Tech",
+        "tasks": [
+          "Provide custom remix playlist",
+          "Test DJ controller with house subwoofers"
+        ],
+        "questionsToAsk": [
+          "Do you require an external monitor booth?"
+        ],
+        "status": "negotiating",
+        "notes": "DJ Kian shortlisted.",
+        "quotedAmount": 70000
+      }
+    ],
+    "personalizedIdeas": [
+      {
+        "id": "pid_b1",
+        "title": "Holographic Photo Moment with Instant Prints",
+        "description": "Iridescent tinsel backdrop with instant square prints guests can peg onto a celebration wire wall.",
+        "category": "Photo & Memories",
+        "estimatedCost": 15000,
+        "reason": "Guests take home a physical retro keepsake immediately.",
+        "isFavorite": true
+      },
+      {
+        "id": "pid_b2",
+        "title": "Signature Cosmic Cocktail Flights",
+        "description": "Trio of color-changing butterfly pea blossom gin and tonic test tubes with edible gold dust.",
+        "category": "Mixology",
+        "estimatedCost": 20000,
+        "reason": "Sensory drink experience that sparks social conversation.",
+        "isFavorite": true
+      }
+    ],
+    "risks": [
+      {
+        "description": "High wind gusts on 18th-floor open terrace",
+        "mitigation": "Weight down all balloon garlands with sandbags and secure acrylic bar menus."
+      }
+    ],
+    "nextActions": [
+      "Lock in DJ contract",
+      "Confirm final cocktail tasting with beverage manager"
+    ],
+    "guests": [],
+    "createdAt": "2026-10-26T17:51:24.782Z",
+    "updatedAt": "2026-10-26T17:51:24.782Z"
+  },
+  {
+    "id": "evt_community_demo",
+    "name": "Greenwood Neighborhood Spring Harvest Fair",
+    "eventType": "community",
+    "date": "2027-03-20",
+    "location": "Greenwood Community Green & Pavilion, Pune",
+    "guestCount": 300,
+    "setting": "outdoor",
+    "duration": "All Day (10 AM - 6 PM)",
+    "priorities": [
+      "Local Food & Refreshments",
+      "Family Activities",
+      "Acoustic Stage & Talks"
+    ],
+    "atmosphereVision": "Wholesome, festive neighborhood celebration highlighting local urban farmers, craft makers, and community storytelling.",
+    "eventConcept": {
+      "title": "Roots & Blooms Spring Gathering",
+      "description": "An inclusive outdoor festival celebrating neighborhood biodiversity, seasonal harvest, and local artists with hands-on craft workshops and open-mic acoustic jams.",
+      "theme": "Community Harvest & Shared Tables",
+      "style": "Rustic Wholesome Community",
+      "colorPalette": [
+        "#10B981",
+        "#7655E8",
+        "#F59E0B",
+        "#3B82F6",
+        "#FFFCF7"
+      ],
+      "creativeDirection": "Use reclaimed wooden crates, colorful fabric bunting, picnic blankets on the lawn, and cheerful chalk directional signage."
+    },
+    "budget": {
+      "currency": "INR",
+      "totalBudget": 250000,
+      "allocations": [
+        {
+          "category": "Council Park Permits & Safety Marshals",
+          "amount": 50000,
+          "reason": "Public park use license, waste management, and first aid booth",
+          "actualCost": 45000
+        },
+        {
+          "category": "Community Kitchen & Local Food Stalls",
+          "amount": 80000,
+          "reason": "Subsidy for 6 neighborhood food stalls and free hydration stations",
+          "actualCost": 0
+        },
+        {
+          "category": "Acoustic Pavilion Stage & Sound System",
+          "amount": 55000,
+          "reason": "Canopied stage, 4 wireless mics, and solar battery power",
+          "actualCost": 50000
+        },
+        {
+          "category": "Children & Senior Workshop Supplies",
+          "amount": 45000,
+          "reason": "Pottery clay, seed ball kits, and communal painting supplies",
+          "actualCost": 35000
+        },
+        {
+          "category": "Directional Signage & Waste Bins",
+          "amount": 20000,
+          "reason": "Biodegradable bin stations and colorful wooden arrow signs",
+          "actualCost": 15000
+        }
+      ]
+    },
+    "timeline": [
+      {
+        "id": "tml_c1",
+        "title": "Submit Municipality Park Permit Application",
+        "description": "Clear security and sound level clearances with local ward office",
+        "dueDate": "2026-12-01",
+        "priority": "high",
+        "category": "Legal",
+        "completed": true
+      },
+      {
+        "id": "tml_c2",
+        "title": "Call for Neighborhood Crafters and Food Vendors",
+        "description": "Select 12 diverse community stalls promoting sustainable goods",
+        "dueDate": "2027-01-15",
+        "priority": "high",
+        "category": "Vendors",
+        "completed": false
+      },
+      {
+        "id": "tml_c3",
+        "title": "Publish Community Performance Schedule",
+        "description": "Schedule local school choir, youth ukulele ensemble, and acoustic folk duo",
+        "dueDate": "2027-02-20",
+        "priority": "medium",
+        "category": "Programming",
+        "completed": false
+      }
+    ],
+    "vendorChecklist": [
+      {
+        "id": "vnd_c1",
+        "category": "City Park Authority",
+        "tasks": [
+          "Verify water point availability for food prep",
+          "Arrange additional municipal recycling bins"
+        ],
+        "questionsToAsk": [
+          "Are quiet generators allowed behind pavilion trees?"
+        ],
+        "status": "confirmed",
+        "notes": "Permit #GW-2027-098 approved.",
+        "quotedAmount": 50000
+      }
+    ],
+    "personalizedIdeas": [
+      {
+        "id": "pid_c1",
+        "title": "Communal Recipe Swap Table",
+        "description": "A clothesline where neighbors pin handwritten family heirloom recipes and take one home.",
+        "category": "Connection",
+        "estimatedCost": 5000,
+        "reason": "Fosters inter-generational cultural bonding across diverse families.",
+        "isFavorite": true
+      },
+      {
+        "id": "pid_c2",
+        "title": "Wildflower Seed Ball Workshop",
+        "description": "Kids and adults mold clay and native wildflower seeds into compact spheres to plant in urban gardens.",
+        "category": "Hands-on Activity",
+        "estimatedCost": 8000,
+        "reason": "Eco-positive activity that extends the fair impact into private gardens.",
+        "isFavorite": true
+      }
+    ],
+    "risks": [
+      {
+        "description": "Unusually warm midday sun in mid-March",
+        "mitigation": "Set up shaded sun-canopies and free lemon-mint water dispensers across the lawn."
+      }
+    ],
+    "nextActions": [
+      "Finalize stall vendor map layout",
+      "Distribute digital flyers to local community WhatsApp groups"
+    ],
+    "guests": [],
+    "createdAt": "2026-10-26T17:51:24.782Z",
+    "updatedAt": "2026-10-26T17:51:24.782Z"
+  }
+]
