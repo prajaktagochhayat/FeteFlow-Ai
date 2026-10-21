@@ -54,15 +54,16 @@ app.get('/api/health', (_req: Request, res: Response) => {
 // Settings
 app.get('/api/settings', (_req: Request, res: Response) => {
   const settings = storageService.getSettings();
-  // Mask API key for security
-  const maskedKey = settings.geminiApiKey
-    ? `${settings.geminiApiKey.slice(0, 4)}...${settings.geminiApiKey.slice(-4)}`
+  const effectiveKey = settings.geminiApiKey || process.env.GEMINI_API_KEY || '';
+  const maskedKey = effectiveKey
+    ? `${effectiveKey.slice(0, 4)}...${effectiveKey.slice(-4)}`
     : '';
+  const aiStatus = aiService.getStatus();
   res.json({
     ...settings,
     geminiApiKey: maskedKey,
-    hasApiKey: Boolean(settings.geminiApiKey),
-    aiStatus: aiService.getStatus(),
+    hasApiKey: aiStatus.isConfigured,
+    aiStatus,
   });
 });
 
@@ -82,19 +83,21 @@ app.post('/api/settings', (req: Request, res: Response) => {
       updates.geminiApiKey = geminiApiKey.trim();
       aiService.refreshConfig(updates.geminiApiKey, updates.geminiModel || current.geminiModel);
     } else if (updates.geminiModel) {
-      aiService.refreshConfig(current.geminiApiKey, updates.geminiModel);
+      aiService.refreshConfig(current.geminiApiKey || process.env.GEMINI_API_KEY, updates.geminiModel);
     }
 
     const saved = storageService.updateSettings(updates);
-    const maskedKey = saved.geminiApiKey
-      ? `${saved.geminiApiKey.slice(0, 4)}...${saved.geminiApiKey.slice(-4)}`
+    const effectiveKey = saved.geminiApiKey || process.env.GEMINI_API_KEY || '';
+    const maskedKey = effectiveKey
+      ? `${effectiveKey.slice(0, 4)}...${effectiveKey.slice(-4)}`
       : '';
+    const aiStatus = aiService.getStatus();
 
     res.json({
       ...saved,
       geminiApiKey: maskedKey,
-      hasApiKey: Boolean(saved.geminiApiKey),
-      aiStatus: aiService.getStatus(),
+      hasApiKey: aiStatus.isConfigured,
+      aiStatus,
     });
   } catch (err: any) {
     res.status(500).json({ error: 'Failed to update settings', details: err.message });

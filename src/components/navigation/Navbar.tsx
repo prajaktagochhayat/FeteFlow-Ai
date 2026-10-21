@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles, Moon, Sun, Menu, X, Calendar, Layers, Compass, HelpCircle } from 'lucide-react';
+import { BrandLogo } from '../common/BrandLogo';
 
 interface NavbarProps {
   onOpenWizard: () => void;
@@ -26,19 +27,9 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Brand Logo */}
         <button
           onClick={() => (isInWorkspace ? onNavigateLandingSection('hero') : window.scrollTo({ top: 0, behavior: 'smooth' }))}
-          className="group flex items-center gap-2.5 text-left focus:outline-none"
+          className="text-left focus:outline-none"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-brand-deep to-brand-primary text-white shadow-md shadow-brand-primary/20 transition-transform duration-200 group-hover:scale-105">
-            <Sparkles className="h-4 w-4" />
-          </div>
-          <div>
-            <div className="font-serif text-lg font-bold tracking-tight text-brand-text">
-              FêteFlow <span className="font-sans text-xs font-semibold tracking-wider text-brand-coral uppercase">AI</span>
-            </div>
-            <div className="hidden text-[10px] font-medium tracking-wide text-brand-text-secondary sm:block">
-              Big moments. Zero chaos.
-            </div>
-          </div>
+          <BrandLogo size="md" showTagline={true} />
         </button>
 
         {/* Desktop Navigation Links */}

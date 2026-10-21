@@ -10,6 +10,7 @@ import {
 import { HeroCelebration3D } from '../visual/HeroCelebration3D';
 import { EventPlan } from '../../types';
 import { formatCurrency } from '../../utils/formatCurrency';
+import { BrandLogo } from '../common/BrandLogo';
 
 interface LandingPageProps {
   onOpenWizard: () => void;
@@ -300,11 +301,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
       {/* Footer */}
       <footer className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-12 border-t border-brand-border/60 text-xs text-brand-text-secondary flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div>
-          © 2026 <strong>FêteFlow AI</strong>. Big moments. Zero chaos.
-        </div>
+        <BrandLogo size="sm" showTagline={true} />
         <div className="flex items-center gap-4">
-          <span>Google Gemini API</span>
+          <span className="font-medium text-brand-primary">Google Gemini API</span>
           <span>·</span>
           <span>Three.js 3D</span>
           <span>·</span>

@@ -14,6 +14,7 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import { WorkspaceTab, EventPlan } from '../../types';
+import { BrandLogo } from '../common/BrandLogo';
 
 interface SidebarProps {
   currentTab: WorkspaceTab;
@@ -50,6 +51,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside className="flex h-full w-full flex-col border-r border-brand-border bg-brand-surface p-4 transition-colors duration-200">
+      {/* Brand Header */}
+      <div className="mb-4 flex items-center justify-between pb-3 border-b border-brand-border/60">
+        <BrandLogo size="sm" showTagline={false} />
+      </div>
+
       {/* Return to Landing */}
       <button
         onClick={onBackToLanding}

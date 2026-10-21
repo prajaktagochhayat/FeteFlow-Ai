@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Sparkles,
   Banknote,
@@ -12,9 +12,11 @@ import {
   Calendar,
   Layers,
   HelpCircle,
+  Key,
 } from 'lucide-react';
 import { EventPlan, WorkspaceTab } from '../../types';
 import { formatCurrency } from '../../utils/formatCurrency';
+import { ApiService } from '../../services/api';
 
 interface DashboardOverviewProps {
   event: EventPlan;
@@ -29,6 +31,18 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
   onUpdateEvent,
   onOpenWizard,
 }) => {
+  const [hasApiKey, setHasApiKey] = useState(false);
+  const [aiModel, setAiModel] = useState('gemini-1.5-flash');
+
+  useEffect(() => {
+    ApiService.getSettings()
+      .then(s => {
+        setHasApiKey(Boolean(s.hasApiKey));
+        if (s.geminiModel) setAiModel(s.geminiModel);
+      })
+      .catch(() => {});
+  }, []);
+
   // Calculations
   const totalBudget = event.budget.totalBudget || 0;
   const totalAllocated = event.budget.allocations.reduce((sum, a) => sum + (a.amount || 0), 0);
@@ -78,7 +92,29 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <button
+              onClick={() => onNavigateTab('settings')}
+              title={hasApiKey ? `Gemini API Active (${aiModel})` : 'Click to configure Gemini API Key'}
+              className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-all ${
+                hasApiKey
+                  ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20'
+                  : 'border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 animate-pulse'
+              }`}
+            >
+              {hasApiKey ? (
+                <>
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
+                  <span>Gemini Connected</span>
+                </>
+              ) : (
+                <>
+                  <Key className="h-3.5 w-3.5 text-amber-500" />
+                  <span>Connect Gemini API</span>
+                </>
+              )}
+            </button>
+
             <button
               onClick={() => onNavigateTab('ai-planner')}
               className="flex items-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-brand-primary/20 hover:bg-brand-primary-hover hover:scale-[1.02] active:scale-[0.98]"
