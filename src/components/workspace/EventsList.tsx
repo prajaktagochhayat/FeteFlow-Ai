@@ -10,6 +10,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { EventPlan } from '../../types';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 interface EventsListProps {
   events: EventPlan[];
@@ -120,7 +121,7 @@ export const EventsList: React.FC<EventsListProps> = ({
                   <div className="flex items-center gap-1.5">
                     <Banknote className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
                     <span>
-                      {event.budget.currency} {event.budget.totalBudget.toLocaleString()} Budget
+                      {formatCurrency(event.budget.totalBudget, event.budget.currency)} Budget
                     </span>
                   </div>
                 </div>

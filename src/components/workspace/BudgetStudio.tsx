@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { EventPlan, BudgetAllocationItem } from '../../types';
 import { ApiService } from '../../services/api';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 interface BudgetStudioProps {
   event: EventPlan;
@@ -152,10 +153,10 @@ export const BudgetStudio: React.FC<BudgetStudioProps> = ({ event, onUpdateEvent
             Total Target Budget
           </div>
           <div className="mt-2 text-2xl font-bold text-brand-text">
-            {currency} {totalBudget.toLocaleString()}
+            {formatCurrency(totalBudget, currency)}
           </div>
           <div className="mt-1 text-xs text-brand-text-secondary">
-            Allocated: {currency} {totalAllocated.toLocaleString()} ({Math.round((totalAllocated / (totalBudget || 1)) * 100)}%)
+            Allocated: {formatCurrency(totalAllocated, currency)} ({Math.round((totalAllocated / (totalBudget || 1)) * 100)}%)
           </div>
         </div>
 
@@ -164,12 +165,12 @@ export const BudgetStudio: React.FC<BudgetStudioProps> = ({ event, onUpdateEvent
             Logged Actual Expenses
           </div>
           <div className="mt-2 text-2xl font-bold text-brand-text">
-            {currency} {totalActual.toLocaleString()}
+            {formatCurrency(totalActual, currency)}
           </div>
           <div className="mt-1 flex items-center gap-1 text-xs">
             {isOverSpent ? (
               <span className="flex items-center gap-1 text-red-500 font-semibold">
-                <AlertTriangle className="h-3.5 w-3.5" /> Over budget by {currency} {(totalActual - totalBudget).toLocaleString()}
+                <AlertTriangle className="h-3.5 w-3.5" /> Over budget by {formatCurrency(totalActual - totalBudget, currency)}
               </span>
             ) : (
               <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
@@ -184,7 +185,7 @@ export const BudgetStudio: React.FC<BudgetStudioProps> = ({ event, onUpdateEvent
             Remaining Funds
           </div>
           <div className={`mt-2 text-2xl font-bold ${remainingBudget < 0 ? 'text-red-500' : 'text-brand-primary'}`}>
-            {currency} {remainingBudget.toLocaleString()}
+            {formatCurrency(remainingBudget, currency)}
           </div>
           <div className="mt-1 text-xs text-brand-text-secondary">
             Available for contingency & unlogged items
@@ -236,7 +237,7 @@ export const BudgetStudio: React.FC<BudgetStudioProps> = ({ event, onUpdateEvent
                 <div key={i} className="flex items-center justify-between text-xs py-1">
                   <span className="font-medium text-brand-text">{alloc.category}</span>
                   <span className="font-bold text-brand-primary">
-                    {currency} {alloc.amount.toLocaleString()}
+                    {formatCurrency(alloc.amount, currency)}
                   </span>
                 </div>
               ))}
@@ -353,7 +354,7 @@ export const BudgetStudio: React.FC<BudgetStudioProps> = ({ event, onUpdateEvent
                       <div>
                         <span className="text-brand-text-secondary">Planned: </span>
                         <span className="font-semibold text-brand-text">
-                          {currency} {alloc.amount.toLocaleString()}
+                          {formatCurrency(alloc.amount, currency)}
                         </span>
                       </div>
                       <div>
@@ -363,7 +364,7 @@ export const BudgetStudio: React.FC<BudgetStudioProps> = ({ event, onUpdateEvent
                             (alloc.actualCost || 0) > alloc.amount ? 'text-red-500' : 'text-brand-text'
                           }`}
                         >
-                          {currency} {(alloc.actualCost || 0).toLocaleString()}
+                          {formatCurrency(alloc.actualCost || 0, currency)}
                         </span>
                       </div>
                     </div>
@@ -420,7 +421,7 @@ export const BudgetStudio: React.FC<BudgetStudioProps> = ({ event, onUpdateEvent
             </svg>
             <div className="absolute text-center">
               <div className="text-xs font-semibold text-brand-text-secondary">Allocated</div>
-              <div className="text-sm font-bold text-brand-text">{currency} {totalAllocated.toLocaleString()}</div>
+              <div className="text-sm font-bold text-brand-text">{formatCurrency(totalAllocated, currency)}</div>
             </div>
           </div>
 

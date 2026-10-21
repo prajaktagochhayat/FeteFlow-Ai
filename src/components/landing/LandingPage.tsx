@@ -2,20 +2,14 @@ import React from 'react';
 import {
   Sparkles,
   ArrowRight,
-  Heart,
-  Cake,
-  Users,
-  Compass,
   PieChart,
   Clock,
   Briefcase,
-  Wand2,
-  CheckCircle2,
-  ShieldCheck,
-  Zap,
+  Users,
 } from 'lucide-react';
 import { HeroCelebration3D } from '../visual/HeroCelebration3D';
 import { EventPlan } from '../../types';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 interface LandingPageProps {
   onOpenWizard: () => void;
@@ -29,72 +23,71 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   demoEvents,
 }) => {
   return (
-    <div className="space-y-24 sm:space-y-32 pb-24">
-      {/* 1. HERO SECTION */}
-      <section id="hero" className="relative pt-6 sm:pt-12">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-8">
-            {/* Left Column: Headlines & CTAs */}
-            <div className="space-y-6 text-left">
-              {/* Eyebrow */}
-              <div className="inline-flex items-center gap-2 rounded-full border border-brand-primary/30 bg-brand-soft/70 px-4 py-1.5 text-xs font-semibold text-brand-deep tracking-wider uppercase backdrop-blur-sm">
-                <Sparkles className="h-3.5 w-3.5 text-brand-primary" />
-                <span>YOUR PERSONAL AI CELEBRATION PLANNER</span>
-              </div>
+    <div className="space-y-24 sm:space-y-32 pb-24 overflow-hidden">
+      {/* 1. CENTERED FULL-BLEED 3D HERO SECTION */}
+      <section id="hero" className="relative min-h-[640px] sm:min-h-[720px] lg:min-h-[780px] w-full flex items-center justify-center overflow-hidden pt-12 pb-20">
+        {/* Full-bleed Alive 3D Celebration Environment */}
+        <HeroCelebration3D />
 
-              {/* Main Heading */}
-              <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-brand-text leading-[1.08]">
-                MAKE ROOM <br />
-                <span className="bg-gradient-to-r from-brand-deep via-brand-primary to-brand-coral bg-clip-text text-transparent">
-                  FOR THE MAGIC.
-                </span>
-              </h1>
+        {/* Ambient Vignette & Subtle Glow to focus attention on Center Text */}
+        <div className="pointer-events-none absolute inset-0 bg-radial-gradient from-transparent via-brand-bg/40 to-brand-bg/90" />
 
-              {/* Supporting Paragraph */}
-              <p className="max-w-xl text-base sm:text-lg text-brand-text-secondary leading-relaxed">
-                From the first idea to the final confetti, let AI plan a celebration that feels unmistakably yours.
-              </p>
-
-              {/* CTA Group */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2">
-                <button
-                  onClick={onOpenWizard}
-                  className="flex items-center justify-center gap-2.5 rounded-2xl bg-brand-primary px-7 py-4 text-sm font-bold text-white shadow-xl shadow-brand-primary/25 transition-all hover:bg-brand-primary-hover hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  <Sparkles className="h-4 w-4" />
-                  <span>Plan My Celebration</span>
-                </button>
-
-                <button
-                  onClick={() => {
-                    const el = document.getElementById('discover');
-                    el?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="flex items-center justify-center gap-2 rounded-2xl border border-brand-border bg-brand-surface/80 px-6 py-4 text-sm font-semibold text-brand-text backdrop-blur-sm transition-all hover:border-brand-primary hover:bg-brand-surface"
-                >
-                  <span>Explore the Magic</span>
-                  <ArrowRight className="h-4 w-4 text-brand-coral" />
-                </button>
-              </div>
-
-              {/* Category Strip */}
-              <div className="pt-4 border-t border-brand-border/60">
-                <p className="text-xs font-medium tracking-wide text-brand-text-secondary">
-                  Weddings · Birthdays · Community Events · Your Imagination
-                </p>
-              </div>
+        {/* Centered Content Container */}
+        <div className="relative z-10 mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center pointer-events-none">
+          <div className="flex flex-col items-center space-y-6">
+            {/* Eyebrow */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-brand-primary/40 bg-brand-surface/80 px-4 py-1.5 text-xs font-semibold text-brand-deep tracking-wider uppercase shadow-md shadow-brand-primary/10 backdrop-blur-md pointer-events-auto">
+              <Sparkles className="h-3.5 w-3.5 text-brand-primary animate-pulse" />
+              <span>YOUR PERSONAL AI CELEBRATION PLANNER</span>
             </div>
 
-            {/* Right Column: 3D Celebration Composition */}
-            <div className="relative flex items-center justify-center">
-              <div className="relative w-full rounded-3xl border border-brand-border/40 bg-gradient-to-b from-brand-soft/20 via-brand-elevated/40 to-transparent p-2 shadow-2xl backdrop-blur-sm">
-                <HeroCelebration3D />
-                <div className="pointer-events-none absolute bottom-4 right-4 rounded-xl border border-brand-border/50 bg-brand-surface/80 px-3 py-1 text-[11px] font-semibold text-brand-text-secondary backdrop-blur-md">
-                  ✨ Interactive 3D Canvas
-                </div>
-              </div>
+            {/* Main Headline (Centered, High Impact Editorial) */}
+            <h1 className="font-serif text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tight text-brand-text leading-[1.05] drop-shadow-sm pointer-events-auto">
+              MAKE ROOM <br />
+              <span className="bg-gradient-to-r from-brand-deep via-brand-primary to-brand-coral bg-clip-text text-transparent">
+                FOR THE MAGIC.
+              </span>
+            </h1>
+
+            {/* Supporting Paragraph (Centered) */}
+            <p className="max-w-2xl text-base sm:text-xl text-brand-text-secondary leading-relaxed font-normal backdrop-blur-[2px] pointer-events-auto">
+              From the first idea to the final confetti, let AI plan a celebration that feels unmistakably yours.
+            </p>
+
+            {/* Centered CTA Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 pointer-events-auto">
+              <button
+                onClick={onOpenWizard}
+                className="flex items-center justify-center gap-2.5 rounded-2xl bg-brand-primary px-8 py-4 text-sm font-bold text-white shadow-xl shadow-brand-primary/30 transition-all hover:bg-brand-primary-hover hover:scale-105 active:scale-95"
+              >
+                <Sparkles className="h-4 w-4" />
+                <span>Plan My Celebration</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  const el = document.getElementById('discover');
+                  el?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="flex items-center justify-center gap-2 rounded-2xl border border-brand-border bg-brand-surface/85 px-7 py-4 text-sm font-semibold text-brand-text shadow-sm backdrop-blur-md transition-all hover:border-brand-primary hover:bg-brand-surface hover:scale-105 active:scale-95"
+              >
+                <span>Explore the Magic</span>
+                <ArrowRight className="h-4 w-4 text-brand-coral" />
+              </button>
+            </div>
+
+            {/* Centered Trust / Category Strip */}
+            <div className="pt-6 border-t border-brand-border/40 pointer-events-auto">
+              <p className="text-xs sm:text-sm font-medium tracking-wide text-brand-text-secondary">
+                Weddings · Birthdays · Community Events · Your Imagination
+              </p>
             </div>
           </div>
+        </div>
+
+        {/* 3D Interaction Tip Pill */}
+        <div className="pointer-events-none absolute bottom-4 right-6 rounded-full border border-brand-border/60 bg-brand-surface/75 px-3 py-1 text-[11px] font-semibold text-brand-text-secondary backdrop-blur-md shadow-sm">
+          ✨ Move cursor to look around · Click to pop
         </div>
       </section>
 
@@ -115,8 +108,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         {/* Demo Cards Grid */}
         <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
           {demoEvents.map(evt => {
-            const isWedding = evt.eventType === 'wedding';
-            const isBirthday = evt.eventType === 'birthday';
             return (
               <div
                 key={evt.id}
@@ -152,7 +143,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                     ))}
                   </div>
 
-                  {/* Highlights */}
+                  {/* Highlights with Indian Numbering Format */}
                   <div className="mt-5 space-y-2 border-t border-brand-border/60 pt-4 text-xs text-brand-text-secondary">
                     <div className="flex items-center justify-between">
                       <span>Target Date:</span>
@@ -160,8 +151,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                     </div>
                     <div className="flex items-center justify-between">
                       <span>Total Budget:</span>
-                      <strong className="text-brand-text">
-                        {evt.budget.currency} {evt.budget.totalBudget.toLocaleString()}
+                      <strong className="text-brand-text text-brand-primary font-bold">
+                        {formatCurrency(evt.budget.totalBudget, evt.budget.currency)}
                       </strong>
                     </div>
                     <div className="flex items-center justify-between">
@@ -302,7 +293,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
           </div>
 
-          {/* Decorative radial blur */}
           <div className="pointer-events-none absolute -left-12 -top-12 h-64 w-64 rounded-full bg-white/20 blur-3xl" />
           <div className="pointer-events-none absolute -right-12 -bottom-12 h-64 w-64 rounded-full bg-white/20 blur-3xl" />
         </div>
@@ -311,7 +301,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* Footer */}
       <footer className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-12 border-t border-brand-border/60 text-xs text-brand-text-secondary flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
-          © 2026 <strong>FêteFlow AI</strong>. Big moments. Zero chaos. Built for GenAI Hackathon.
+          © 2026 <strong>FêteFlow AI</strong>. Big moments. Zero chaos.
         </div>
         <div className="flex items-center gap-4">
           <span>Google Gemini API</span>

@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { EventType, EventWizardInput, EventPlan } from '../../types';
 import { ApiService } from '../../services/api';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 interface EventWizardModalProps {
   isOpen: boolean;
@@ -575,7 +576,7 @@ export const EventWizardModal: React.FC<EventWizardModalProps> = ({
                   <div className="rounded-2xl border border-brand-border bg-brand-surface p-4">
                     <div className="flex items-center justify-between mb-3">
                       <h5 className="text-xs font-semibold text-brand-text-secondary uppercase tracking-wider">
-                        Budget Allocation ({generatedPlan.budget.currency} {generatedPlan.budget.totalBudget.toLocaleString()})
+                        Budget Allocation ({formatCurrency(generatedPlan.budget.totalBudget, generatedPlan.budget.currency)})
                       </h5>
                     </div>
                     <div className="space-y-2">
@@ -586,7 +587,7 @@ export const EventWizardModal: React.FC<EventWizardModalProps> = ({
                             <div className="flex items-center justify-between font-medium">
                               <span className="text-brand-text">{alloc.category}</span>
                               <span className="text-brand-primary">
-                                {generatedPlan.budget.currency} {alloc.amount.toLocaleString()} ({pct}%)
+                                {formatCurrency(alloc.amount, generatedPlan.budget.currency)} ({pct}%)
                               </span>
                             </div>
                             <div className="h-1.5 w-full rounded-full bg-brand-elevated overflow-hidden">

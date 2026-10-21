@@ -14,6 +14,14 @@ export interface AIProviderStatus {
   provider: 'gemini' | 'fallback';
 }
 
+function formatCurrency(amount: number, currency: string = 'INR'): string {
+  if (isNaN(amount) || amount === null || amount === undefined) return '₹0';
+  const isINR = currency.toUpperCase() === 'INR' || currency === '₹';
+  const symbol = isINR ? '₹' : currency === 'USD' ? '$' : currency === 'EUR' ? '€' : `${currency} `;
+  const locale = isINR ? 'en-IN' : 'en-US';
+  return `${symbol}${Math.round(amount).toLocaleString(locale)}`;
+}
+
 export class EventPlanningService {
   private apiKey: string | null = null;
   private modelName: string = 'gemini-1.5-flash';
@@ -420,7 +428,7 @@ Provide JSON:
     const completedTasks = event.timeline.filter(t => t.completed).length;
     const pendingTasks = event.timeline.length - completedTasks;
 
-    const summary = `${event.name} is scheduled for ${event.date} with an anticipated ${event.guestCount} guests. The aesthetic direction centers on "${event.eventConcept.title}" with a target budget of ${event.budget.currency} ${event.budget.totalBudget.toLocaleString()} (${totalSpent > 0 ? `${event.budget.currency} ${totalSpent.toLocaleString()} spent to date` : 'no actual expenses logged yet'}). Currently, ${completedTasks} of ${event.timeline.length} milestones are completed with ${pendingTasks} remaining.`;
+    const summary = `${event.name} is scheduled for ${event.date} with an anticipated ${event.guestCount} guests. The aesthetic direction centers on "${event.eventConcept.title}" with a target budget of ${formatCurrency(event.budget.totalBudget, event.budget.currency)} (${totalSpent > 0 ? `${formatCurrency(totalSpent, event.budget.currency)} spent to date` : 'no actual expenses logged yet'}). Currently, ${completedTasks} of ${event.timeline.length} milestones are completed with ${pendingTasks} remaining.`;
 
     const topPriorities = event.timeline
       .filter(t => !t.completed)
@@ -608,7 +616,7 @@ Provide JSON:
     const q = query.toLowerCase();
     if (q.includes('budget') || q.includes('cost') || q.includes('money')) {
       const topCat = event.budget.allocations[0];
-      return `For "${event.name}", your primary budget allocation is currently ${topCat?.category || 'Venue'} at ${event.budget.currency} ${topCat?.amount.toLocaleString() || '0'}. If you wish to optimize spending, consider adjusting decor or entertainment allocations without touching core guest dining!`;
+      return `For "${event.name}", your primary budget allocation is currently ${topCat?.category || 'Venue'} at ${topCat ? formatCurrency(topCat.amount, event.budget.currency) : '₹0'}. If you wish to optimize spending, consider adjusting decor or entertainment allocations without touching core guest dining!`;
     }
     if (q.includes('decor') || q.includes('theme') || q.includes('color')) {
       return `Your current creative theme is "${event.eventConcept.title}" using a palette of ${event.eventConcept.colorPalette.join(', ')}. For an elevated visual touch, incorporate subtle ambient lighting, textured fabrics, and asymmetrical flower/balloon clusters that echo this color story.`;
@@ -640,7 +648,7 @@ Provide JSON:
         venue.reason = `${venue.reason} (Reallocated surplus from decor)`;
         return {
           newAllocations,
-          explanation: `Reduced decor by 15% (-${event.budget.currency} ${cut.toLocaleString()}) by swapping exotic florals for high-impact sculptural lighting and seasonal greenery, maintaining budget balance.`,
+          explanation: `Reduced decor by 15% (-${formatCurrency(cut, event.budget.currency)}) by swapping exotic florals for high-impact sculptural lighting and seasonal greenery, maintaining budget balance.`,
           provider: 'fallback',
         };
       }
@@ -670,7 +678,7 @@ Provide JSON:
     category: string
   ): { briefMarkdown: string; questionsToAsk: string[]; estimatedRange: string; provider: 'gemini' | 'fallback' } {
     const allocation = event.budget.allocations.find(a => a.category.toLowerCase().includes(category.toLowerCase()));
-    const budgetStr = allocation ? `${event.budget.currency} ${allocation.amount.toLocaleString()}` : 'Negotiable';
+    const budgetStr = allocation ? formatCurrency(allocation.amount, event.budget.currency) : 'Negotiable';
 
     const briefMarkdown = `# VENDOR REQUEST FOR PROPOSAL: ${category.toUpperCase()}
 
@@ -707,8 +715,8 @@ Please submit:
     ];
 
     const estimatedRange = allocation
-      ? `${event.budget.currency} ${(allocation.amount * 0.85).toLocaleString()} – ${(allocation.amount * 1.1).toLocaleString()}`
-      : `${event.budget.currency} 25,000 – 75,000`;
+      ? `${formatCurrency(allocation.amount * 0.85, event.budget.currency)} – ${formatCurrency(allocation.amount * 1.1, event.budget.currency)}`
+      : `${formatCurrency(25000, event.budget.currency)} – ${formatCurrency(75000, event.budget.currency)}`;
 
     return { briefMarkdown, questionsToAsk, estimatedRange, provider: 'fallback' };
   }

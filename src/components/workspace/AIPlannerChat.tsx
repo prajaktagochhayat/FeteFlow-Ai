@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { EventPlan } from '../../types';
 import { ApiService } from '../../services/api';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 interface AIPlannerChatProps {
   event: EventPlan;
@@ -38,7 +39,7 @@ export const AIPlannerChat: React.FC<AIPlannerChatProps> = ({ event }) => {
     {
       id: 'init_1',
       role: 'assistant',
-      content: `Hello! I am your FêteFlow AI Creative Partner for **"${event.name}"**. I have full context on your target date (${event.date}), ${event.guestCount} guests, your ${event.budget.currency} ${event.budget.totalBudget.toLocaleString()} budget, and your aesthetic direction ("${event.eventConcept.title}"). How can I assist your planning today?`,
+      content: `Hello! I am your FêteFlow AI Creative Partner for **"${event.name}"**. I have full context on your target date (${event.date}), ${event.guestCount} guests, your ${formatCurrency(event.budget.totalBudget, event.budget.currency)} budget, and your aesthetic direction ("${event.eventConcept.title}"). How can I assist your planning today?`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);

@@ -65,10 +65,10 @@
   outline-offset: 2px;
 }
 
-/* Cursor handling */
+/* Hide native system cursor so only the custom magnetic celebration cursor is shown */
 @media (pointer: fine) {
-  body.has-custom-cursor {
-    cursor: default;
+  html, body, button, a, input, select, textarea, [role="button"], * {
+    cursor: none !important;
   }
 }
 

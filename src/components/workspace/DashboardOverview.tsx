@@ -14,6 +14,7 @@ import {
   HelpCircle,
 } from 'lucide-react';
 import { EventPlan, WorkspaceTab } from '../../types';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 interface DashboardOverviewProps {
   event: EventPlan;
@@ -101,10 +102,10 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
             <Banknote className="h-4 w-4 text-brand-primary" />
           </div>
           <div className="mt-2 text-2xl font-bold text-brand-text">
-            {event.budget.currency} {totalBudget.toLocaleString()}
+            {formatCurrency(totalBudget, event.budget.currency)}
           </div>
           <div className="mt-1 text-xs text-brand-text-secondary">
-            Allocated: {event.budget.currency} {totalAllocated.toLocaleString()}
+            Allocated: {formatCurrency(totalAllocated, event.budget.currency)}
           </div>
         </div>
 
@@ -115,10 +116,10 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
             <TrendingUp className="h-4 w-4 text-brand-coral" />
           </div>
           <div className="mt-2 text-2xl font-bold text-brand-text">
-            {event.budget.currency} {totalSpent.toLocaleString()}
+            {formatCurrency(totalSpent, event.budget.currency)}
           </div>
           <div className="mt-1 text-xs text-brand-text-secondary">
-            Remaining: {event.budget.currency} {remainingBudget.toLocaleString()}
+            Remaining: {formatCurrency(remainingBudget, event.budget.currency)}
           </div>
         </div>
 

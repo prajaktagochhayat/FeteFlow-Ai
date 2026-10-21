@@ -243,8 +243,8 @@
         "tableOrGroup": "Table 3"
       }
     ],
-    "createdAt": "2026-10-26T17:51:24.781Z",
-    "updatedAt": "2026-10-26T17:51:24.782Z"
+    "createdAt": "2026-10-26T18:04:08.346Z",
+    "updatedAt": "2026-10-26T18:04:08.346Z"
   },
   {
     "id": "evt_birthday_demo",
@@ -411,8 +411,8 @@
       "Confirm final cocktail tasting with beverage manager"
     ],
     "guests": [],
-    "createdAt": "2026-10-26T17:51:24.782Z",
-    "updatedAt": "2026-10-26T17:51:24.782Z"
+    "createdAt": "2026-10-26T18:04:08.346Z",
+    "updatedAt": "2026-10-26T18:04:08.346Z"
   },
   {
     "id": "evt_community_demo",
@@ -555,7 +555,7 @@
       "Distribute digital flyers to local community WhatsApp groups"
     ],
     "guests": [],
-    "createdAt": "2026-10-26T17:51:24.782Z",
-    "updatedAt": "2026-10-26T17:51:24.782Z"
+    "createdAt": "2026-10-26T18:04:08.347Z",
+    "updatedAt": "2026-10-26T18:04:08.347Z"
   }
 ]

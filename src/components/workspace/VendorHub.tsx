@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { EventPlan, VendorChecklistItem } from '../../types';
 import { ApiService } from '../../services/api';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 interface VendorHubProps {
   event: EventPlan;
@@ -138,7 +139,7 @@ export const VendorHub: React.FC<VendorHubProps> = ({ event, onUpdateEvent }) =>
                     <span>{v.tasks.length} checklist items</span>
                     {v.quotedAmount && v.quotedAmount > 0 ? (
                       <span className="font-semibold text-brand-text">
-                        {currency} {v.quotedAmount.toLocaleString()}
+                        {formatCurrency(v.quotedAmount, currency)}
                       </span>
                     ) : (
                       <span>No quote logged</span>

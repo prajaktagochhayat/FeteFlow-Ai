@@ -13,6 +13,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { EventPlan, PersonalizedIdea } from '../../types';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 interface InspirationStudioProps {
   event: EventPlan;
@@ -196,7 +197,7 @@ export const InspirationStudio: React.FC<InspirationStudioProps> = ({ event, onU
               <div className="text-xs">
                 {idea.estimatedCost && idea.estimatedCost > 0 ? (
                   <span className="font-semibold text-brand-text">
-                    Est. {currency} {idea.estimatedCost.toLocaleString()}
+                    Est. {formatCurrency(idea.estimatedCost, currency)}
                   </span>
                 ) : (
                   <span className="text-[10px] text-brand-text-secondary">Low / DIY Cost</span>
