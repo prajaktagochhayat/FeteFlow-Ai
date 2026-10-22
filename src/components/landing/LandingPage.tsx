@@ -11,6 +11,7 @@ import { HeroCelebration3D } from '../visual/HeroCelebration3D';
 import { EventPlan } from '../../types';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { BrandLogo } from '../common/BrandLogo';
+import { SHOWCASE_EVENTS } from '../../data/showcaseEvents';
 
 interface LandingPageProps {
   onOpenWizard: () => void;
@@ -108,7 +109,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
         {/* Demo Cards Grid */}
         <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
-          {demoEvents.map(evt => {
+          {SHOWCASE_EVENTS.map(evt => {
             return (
               <div
                 key={evt.id}

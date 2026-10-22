@@ -89,23 +89,29 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {dropdownOpen && (
           <div className="absolute left-0 top-full z-30 mt-1.5 w-full rounded-xl border border-brand-border bg-brand-surface p-1.5 shadow-xl">
             <div className="max-h-48 overflow-y-auto">
-              {events.map(evt => (
-                <button
-                  key={evt.id}
-                  onClick={() => {
-                    onSelectEvent(evt);
-                    setDropdownOpen(false);
-                  }}
-                  className={`flex w-full flex-col rounded-lg px-3 py-2 text-left text-xs transition-colors ${
-                    selectedEvent?.id === evt.id ? 'bg-brand-soft text-brand-deep font-semibold' : 'text-brand-text hover:bg-brand-elevated'
-                  }`}
-                >
-                  <span className="truncate">{evt.name}</span>
-                  <span className="text-[10px] text-brand-text-secondary">
-                    {evt.eventType.toUpperCase()} · {evt.date}
-                  </span>
-                </button>
-              ))}
+              {events.length === 0 ? (
+                <div className="p-3 text-center text-xs text-brand-text-secondary">
+                  No active celebrations yet
+                </div>
+              ) : (
+                events.map(evt => (
+                  <button
+                    key={evt.id}
+                    onClick={() => {
+                      onSelectEvent(evt);
+                      setDropdownOpen(false);
+                    }}
+                    className={`flex w-full flex-col rounded-lg px-3 py-2 text-left text-xs transition-colors ${
+                      selectedEvent?.id === evt.id ? 'bg-brand-soft text-brand-deep font-semibold' : 'text-brand-text hover:bg-brand-elevated'
+                    }`}
+                  >
+                    <span className="truncate">{evt.name}</span>
+                    <span className="text-[10px] text-brand-text-secondary">
+                      {evt.eventType.toUpperCase()} · {evt.date}
+                    </span>
+                  </button>
+                ))
+              )}
             </div>
             <div className="mt-1 border-t border-brand-border pt-1">
               <button

@@ -60,8 +60,10 @@ export interface PersonalizedIdea {
 }
 
 export interface Risk {
+  id?: string;
   description: string;
   mitigation: string;
+  severity?: 'low' | 'medium' | 'high';
 }
 
 export interface Guest {

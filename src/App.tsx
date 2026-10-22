@@ -122,9 +122,6 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col font-sans transition-colors duration-200">
-      {/* Custom Magnetic Cursor */}
-      <CustomCursor />
-
       {/* Global Top Navbar */}
       <Navbar
         onOpenWizard={() => setIsWizardOpen(true)}
@@ -189,7 +186,22 @@ export const App: React.FC = () => {
                 </button>
               </div>
 
-              {selectedEvent ? (
+              {currentTab === 'settings' ? (
+                <SettingsView
+                  currentTheme={theme}
+                  onToggleTheme={toggleTheme}
+                  events={events}
+                  onResetCompleted={loadEvents}
+                />
+              ) : currentTab === 'events' ? (
+                <EventsList
+                  events={events}
+                  selectedEvent={selectedEvent}
+                  onSelectEvent={setSelectedEvent}
+                  onOpenWizard={() => setIsWizardOpen(true)}
+                  onDeleteEvent={handleDeleteEvent}
+                />
+              ) : selectedEvent ? (
                 <>
                   {currentTab === 'overview' && (
                     <DashboardOverview
@@ -197,16 +209,6 @@ export const App: React.FC = () => {
                       onNavigateTab={setCurrentTab}
                       onUpdateEvent={handleUpdateEvent}
                       onOpenWizard={() => setIsWizardOpen(true)}
-                    />
-                  )}
-
-                  {currentTab === 'events' && (
-                    <EventsList
-                      events={events}
-                      selectedEvent={selectedEvent}
-                      onSelectEvent={setSelectedEvent}
-                      onOpenWizard={() => setIsWizardOpen(true)}
-                      onDeleteEvent={handleDeleteEvent}
                     />
                   )}
 
@@ -248,27 +250,21 @@ export const App: React.FC = () => {
                       onUpdateEvent={handleUpdateEvent}
                     />
                   )}
-
-                  {currentTab === 'settings' && (
-                    <SettingsView
-                      currentTheme={theme}
-                      onToggleTheme={toggleTheme}
-                      events={events}
-                      onResetCompleted={loadEvents}
-                    />
-                  )}
                 </>
               ) : (
-                <div className="rounded-3xl border border-brand-border bg-brand-surface p-12 text-center">
-                  <h3 className="font-serif text-2xl font-bold text-brand-text">No Celebration Active</h3>
-                  <p className="mt-2 text-xs text-brand-text-secondary">
-                    Create your first AI celebration plan or pick from our demonstration events.
+                <div className="mx-auto my-12 max-w-xl rounded-3xl border border-brand-border bg-brand-surface p-10 text-center shadow-sm">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-primary/10 text-brand-primary">
+                    <span className="text-3xl">✨</span>
+                  </div>
+                  <h3 className="font-serif text-2xl font-bold text-brand-text">Your Celebration Workspace is Ready</h3>
+                  <p className="mt-2 text-sm text-brand-text-secondary leading-relaxed">
+                    Start a brand-new celebration tailored to your dates, guests, and Indian Rupee budget ceiling. Powered live by your connected Gemini GenAI.
                   </p>
                   <button
                     onClick={() => setIsWizardOpen(true)}
-                    className="mt-6 rounded-2xl bg-brand-primary px-6 py-3 text-xs font-bold text-white shadow-md shadow-brand-primary/20 hover:bg-brand-primary-hover"
+                    className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-brand-primary px-8 py-3.5 text-xs font-bold text-white shadow-lg shadow-brand-primary/25 transition-all hover:bg-brand-primary-hover hover:scale-[1.02] active:scale-[0.98]"
                   >
-                    Start Planning
+                    <span>✦ Plan Celebration with AI</span>
                   </button>
                 </div>
               )}
@@ -283,6 +279,9 @@ export const App: React.FC = () => {
         onClose={() => setIsWizardOpen(false)}
         onEventCreated={handleEventCreated}
       />
+
+      {/* Custom Magnetic Cursor (Rendered on top of all modals and views) */}
+      <CustomCursor />
     </div>
   );
 };

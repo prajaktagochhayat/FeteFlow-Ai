@@ -48,23 +48,19 @@ export const CustomCursor: React.FC = () => {
       mouseX = e.clientX;
       mouseY = e.clientY;
 
-      if (!isVisible) {
-        setIsVisible(true);
-        ringX = mouseX;
-        ringY = mouseY;
-      }
+      setIsVisible(true);
 
       const target = e.target as HTMLElement | null;
       if (target) {
         const isInput = Boolean(target.closest('input, textarea'));
         const isInteractive = Boolean(
-          target.closest('button, a, select, [role="button"], .clickable, .interactive')
+          target.closest('button, a, select, [role="button"], .clickable, .interactive, input[type="radio"], input[type="checkbox"], label')
         );
         setIsTextInput(isInput);
         setIsHoveringInteractive(isInteractive);
       }
 
-      // Spawn fairy dust sparkles as mouse moves (throttled to ~40ms)
+      // Spawn fairy dust sparkles as mouse moves (throttled to ~35ms)
       const now = performance.now();
       if (now - lastSparkleTime > 35) {
         lastSparkleTime = now;
@@ -86,6 +82,7 @@ export const CustomCursor: React.FC = () => {
 
     // On Click: Celebration burst of 8 particles
     const onMouseDown = (e: MouseEvent) => {
+      setIsVisible(true);
       for (let i = 0; i < 8; i++) {
         const angle = (i / 8) * Math.PI * 2;
         const speed = 2.5 + Math.random() * 2.5;
@@ -103,8 +100,15 @@ export const CustomCursor: React.FC = () => {
       }
     };
 
-    const onMouseLeave = () => {
-      setIsVisible(false);
+    const onMouseEnter = () => {
+      setIsVisible(true);
+    };
+
+    const onMouseLeave = (e: MouseEvent) => {
+      // Only hide if cursor really left the browser window viewport
+      if (!e.relatedTarget) {
+        setIsVisible(false);
+      }
     };
 
     // Resize canvas to window
@@ -119,8 +123,8 @@ export const CustomCursor: React.FC = () => {
 
     const render = () => {
       // Smooth spring interpolation
-      ringX += (mouseX - ringX) * 0.22;
-      ringY += (mouseY - ringY) * 0.22;
+      ringX += (mouseX - ringX) * 0.25;
+      ringY += (mouseY - ringY) * 0.25;
 
       if (dotRef.current) {
         dotRef.current.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
@@ -168,36 +172,42 @@ export const CustomCursor: React.FC = () => {
 
     window.addEventListener('mousemove', onMouseMove, { passive: true });
     window.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mouseenter', onMouseEnter);
     document.addEventListener('mouseleave', onMouseLeave);
     animationFrameId = requestAnimationFrame(render);
 
     return () => {
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mousedown', onMouseDown);
+      window.removeEventListener('mouseenter', onMouseEnter);
       window.removeEventListener('resize', handleResize);
       document.removeEventListener('mouseleave', onMouseLeave);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [isVisible]);
+  }, []); // Run ONCE on mount so listeners never get lost!
 
-  if (isTouchDevice || !isVisible) {
+  if (isTouchDevice) {
     return null;
   }
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden select-none">
+    <div
+      className={`pointer-events-none fixed inset-0 z-[999999] overflow-hidden select-none transition-opacity duration-150 ${
+        isVisible ? 'opacity-100' : 'opacity-0'
+      }`}
+    >
       {/* 2D Canvas for fairy dust sparkles & click bursts */}
       <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" />
 
-      {/* Center Core Dot */}
+      {/* Center Core Dot (Luminous high-contrast jewel) */}
       <div
         ref={dotRef}
-        className={`absolute -left-1.5 -top-1.5 rounded-full transition-transform duration-75 ease-out ${
+        className={`absolute rounded-full transition-transform duration-75 ease-out ${
           isTextInput
-            ? 'h-5 w-1 bg-brand-primary rounded-sm shadow-[0_0_8px_var(--brand-primary)]'
+            ? '-left-0.5 -top-3 h-6 w-1 bg-brand-primary rounded-sm shadow-[0_0_8px_var(--brand-primary)]'
             : isHoveringInteractive
-            ? 'h-3.5 w-3.5 -left-1.5 -top-1.5 bg-gradient-to-tr from-brand-primary to-brand-coral shadow-[0_0_12px_#ff7c91]'
-            : 'h-2.5 w-2.5 bg-brand-primary shadow-[0_0_10px_var(--brand-primary)]'
+            ? '-left-2 -top-2 h-4 w-4 bg-gradient-to-tr from-brand-primary via-purple-500 to-brand-coral border-2 border-white shadow-[0_0_14px_#ff7c91,0_2px_6px_rgba(0,0,0,0.3)]'
+            : '-left-1.5 -top-1.5 h-3 w-3 bg-gradient-to-tr from-brand-primary to-brand-coral border-2 border-white shadow-[0_0_10px_var(--brand-primary),0_2px_4px_rgba(0,0,0,0.25)]'
         }`}
       />
 
@@ -208,12 +218,12 @@ export const CustomCursor: React.FC = () => {
           isTextInput
             ? 'opacity-0 scale-50'
             : isHoveringInteractive
-            ? 'h-14 w-14 -left-7 -top-7 scale-110 border-2 border-brand-coral/80 bg-gradient-to-tr from-brand-primary/20 via-brand-coral/25 to-brand-soft/30 shadow-[0_0_20px_rgba(255,124,145,0.4)]'
-            : 'h-9 w-9 -left-4.5 -top-4.5 border border-brand-primary/50 bg-brand-primary/10 shadow-[0_0_10px_var(--brand-primary)]'
+            ? 'h-14 w-14 -left-7 -top-7 scale-110 border-2 border-brand-coral/90 bg-gradient-to-tr from-brand-primary/25 via-brand-coral/30 to-brand-soft/40 shadow-[0_0_20px_rgba(255,124,145,0.6)]'
+            : 'h-9 w-9 -left-4.5 -top-4.5 border-2 border-brand-primary/60 bg-brand-primary/15 shadow-[0_0_12px_rgba(118,85,232,0.4)]'
         }`}
       >
         {isHoveringInteractive && (
-          <span className="text-[11px] text-white font-bold drop-shadow-md animate-spin duration-1000">
+          <span className="text-[12px] text-white font-extrabold drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)] animate-spin duration-1000">
             ✦
           </span>
         )}
