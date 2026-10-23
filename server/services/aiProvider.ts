@@ -24,7 +24,7 @@ function formatCurrency(amount: number, currency: string = 'INR'): string {
 
 export class EventPlanningService {
   private apiKey: string | null = null;
-  private modelName: string = 'gemini-1.5-flash';
+  private modelName: string = 'gemini-3.5-flash';
   private client: GoogleGenerativeAI | null = null;
 
   constructor() {
@@ -33,7 +33,7 @@ export class EventPlanningService {
 
   public refreshConfig(newKey?: string, newModel?: string) {
     this.apiKey = newKey || process.env.GEMINI_API_KEY || null;
-    this.modelName = newModel || process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+    this.modelName = newModel || process.env.GEMINI_MODEL || 'gemini-3.5-flash';
 
     if (this.apiKey && this.apiKey.trim().length > 0) {
       try {
@@ -53,6 +53,35 @@ export class EventPlanningService {
       model: this.modelName,
       provider: this.client ? 'gemini' : 'fallback',
     };
+  }
+
+  /**
+   * Resilient executor that attempts the configured model, and falls back to
+   * high-availability supported Gemini models (gemini-3.5-flash, gemini-3.8-flash)
+   */
+  private async callGemini(
+    options: { responseMimeType?: string } | undefined,
+    fn: (model: any) => Promise<any>
+  ): Promise<any> {
+    if (!this.client) throw new Error('Gemini client not initialized');
+    const candidates = [this.modelName, 'gemini-3.5-flash', 'gemini-3.8-flash'].filter(Boolean);
+    const unique = Array.from(new Set(candidates));
+    let lastError: any = null;
+
+    for (const m of unique) {
+      try {
+        const config: any = { model: m };
+        if (options?.responseMimeType) {
+          config.generationConfig = { responseMimeType: options.responseMimeType };
+        }
+        const model = this.client.getGenerativeModel(config);
+        return await fn(model);
+      } catch (err: any) {
+        lastError = err;
+        console.warn(`Gemini attempt with model "${m}" failed:`, err?.message || err);
+      }
+    }
+    throw lastError;
   }
 
   // FEATURE 1: Full Event Plan Generation
@@ -119,12 +148,10 @@ JSON Structure:
 }
 `;
 
-        const model = this.client.getGenerativeModel({
-          model: this.modelName,
-          generationConfig: { responseMimeType: 'application/json' },
-        });
-
-        const result = await model.generateContent(prompt);
+        const result = await this.callGemini(
+          { responseMimeType: 'application/json' },
+          (model) => model.generateContent(prompt)
+        );
         const text = result.response.text();
         const parsed = JSON.parse(text);
 
@@ -212,8 +239,10 @@ User Inquiry: ${newMessage}
 Respond as an encouraging, creative, and pragmatic event specialist. Offer actionable advice, specific suggestions, and clear next steps. Keep response under 300 words.
 `;
 
-        const model = this.client.getGenerativeModel({ model: this.modelName });
-        const result = await model.generateContent(prompt);
+        const result = await this.callGemini(
+          undefined,
+          (model) => model.generateContent(prompt)
+        );
         return { response: result.response.text(), provider: 'gemini' };
       } catch (err) {
         console.warn('Gemini chat failed, using fallback:', err);
@@ -248,11 +277,10 @@ Return pure JSON with this structure:
   ]
 }
 `;
-        const model = this.client.getGenerativeModel({
-          model: this.modelName,
-          generationConfig: { responseMimeType: 'application/json' },
-        });
-        const result = await model.generateContent(prompt);
+        const result = await this.callGemini(
+          { responseMimeType: 'application/json' },
+          (model) => model.generateContent(prompt)
+        );
         const parsed = JSON.parse(result.response.text());
         if (parsed.newAllocations && Array.isArray(parsed.newAllocations)) {
           return {
@@ -290,11 +318,10 @@ Return pure JSON:
   ]
 }
 `;
-        const model = this.client.getGenerativeModel({
-          model: this.modelName,
-          generationConfig: { responseMimeType: 'application/json' },
-        });
-        const result = await model.generateContent(prompt);
+        const result = await this.callGemini(
+          { responseMimeType: 'application/json' },
+          (model) => model.generateContent(prompt)
+        );
         const parsed = JSON.parse(result.response.text());
         const recoveryActions = parsed.recoveryActions || [];
         const updatedTimeline = event.timeline.map(t => {
@@ -351,11 +378,10 @@ Return pure JSON:
   "estimatedRange": "e.g. ₹50,000 - ₹80,000"
 }
 `;
-        const model = this.client.getGenerativeModel({
-          model: this.modelName,
-          generationConfig: { responseMimeType: 'application/json' },
-        });
-        const result = await model.generateContent(prompt);
+        const result = await this.callGemini(
+          { responseMimeType: 'application/json' },
+          (model) => model.generateContent(prompt)
+        );
         const parsed = JSON.parse(result.response.text());
         return {
           briefMarkdown: parsed.briefMarkdown || `# Vendor Brief: ${category}\n\n**Event:** ${event.name}`,
@@ -393,11 +419,10 @@ Provide JSON:
   "minimal": "Clean, modern, essential wording"
 }
 `;
-        const model = this.client.getGenerativeModel({
-          model: this.modelName,
-          generationConfig: { responseMimeType: 'application/json' },
-        });
-        const result = await model.generateContent(prompt);
+        const result = await this.callGemini(
+          { responseMimeType: 'application/json' },
+          (model) => model.generateContent(prompt)
+        );
         const parsed = JSON.parse(result.response.text());
         return {
           formal: parsed.formal || `We cordially request your presence at ${event.name} on ${event.date}.`,
@@ -613,7 +638,29 @@ Provide JSON:
   }
 
   private generateDeterministicChatResponse(event: EventPlan, query: string): string {
-    const q = query.toLowerCase();
+    const q = query.toLowerCase().trim();
+
+    // Check for affirmatives / continuations
+    if (q === 'yes' || q === 'okay' || q === 'ok' || q === 'sure' || q === 'sounds good' || q.includes("let's do it") || q.includes('continue')) {
+      const pendingMilestones = event.timeline.filter(t => !t.completed);
+      const nextMilestone = pendingMilestones[0];
+      const topCat = event.budget.allocations[0];
+
+      return `Wonderful! Let's keep the momentum going for "${event.name}". 
+
+Here are the highest-impact immediate steps:
+1. **${nextMilestone ? nextMilestone.title : 'Lock Primary Venue'}**: ${nextMilestone ? `Target due date: ${nextMilestone.dueDate}` : 'Crucial for anchoring all subsequent vendor contracts'}.
+2. **Review ${topCat?.category || 'Primary Category'}**: Currently allocated ${topCat ? formatCurrency(topCat.amount, event.budget.currency) : '₹0'}.
+3. **Guest Studio Invitations**: Head to the Guest Experience Studio to view your 3 bespoke generated invitation card designs (Modern Luxury, Botanical Chic, and Minimalist Editorial).
+
+Would you like me to draft a vendor outreach email or rebalance any budget item?`;
+    }
+
+    // Check for greetings
+    if (q === 'hi' || q === 'hello' || q === 'hey' || q.startsWith('hi ') || q.startsWith('hello ')) {
+      return `Hello! I am your FêteFlow AI celebration strategist for "${event.name}". We are targeting ${event.date} with ${event.guestCount} guests under the aesthetic theme of "${event.eventConcept.title}". How can I assist you right now? We can refine your budget, plan vendor questions, or generate ideas!`;
+    }
+
     if (q.includes('budget') || q.includes('cost') || q.includes('money')) {
       const topCat = event.budget.allocations[0];
       return `For "${event.name}", your primary budget allocation is currently ${topCat?.category || 'Venue'} at ${topCat ? formatCurrency(topCat.amount, event.budget.currency) : '₹0'}. If you wish to optimize spending, consider adjusting decor or entertainment allocations without touching core guest dining!`;

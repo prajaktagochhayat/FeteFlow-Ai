@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import {
   X,
@@ -87,6 +87,35 @@ export const EventWizardModal: React.FC<EventWizardModalProps> = ({
 
   // Generated Plan State (Step 5)
   const [generatedPlan, setGeneratedPlan] = useState<EventPlan | null>(null);
+
+  // Automatically reset to Step 1 with fresh state whenever modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setStep(1);
+      setGeneratedPlan(null);
+      setError(null);
+      setProviderUsed(null);
+      setLoading(false);
+      setFormData({
+        eventType: 'wedding',
+        eventName: '',
+        date: new Date(Date.now() + 60 * 86400000).toISOString().split('T')[0],
+        location: '',
+        guestCount: 80,
+        setting: 'outdoor',
+        duration: '1 Day',
+        budgetAmount: 500000,
+        currency: 'INR',
+        budgetFlexibility: 'Moderate',
+        stylePreference: 'Modern Romantic Chic',
+        colorPreference: 'Lilac, Soft Coral, and Ivory',
+        foodPreference: 'Seasonal multi-course tasting',
+        accessibilityNeeds: '',
+        priorities: ['Venue & Architecture', 'Catering & Beverages', 'Atmosphere & Decor'],
+        atmosphereDescription: '',
+      });
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

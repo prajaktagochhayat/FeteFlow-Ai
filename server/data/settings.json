@@ -1,6 +1,6 @@
 {
   "geminiApiKey": "",
-  "geminiModel": "gemini-1.5-flash",
+  "geminiModel": "gemini-3.5-flash",
   "defaultCurrency": "INR",
   "theme": "system",
   "reducedMotion": false
