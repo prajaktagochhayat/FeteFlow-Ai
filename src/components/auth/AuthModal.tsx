@@ -83,19 +83,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  const handleFillDemo = (demoType: 'host1' | 'host2') => {
-    setError(null);
-    if (demoType === 'host1') {
-      setEmail('ananya@feteflow.ai');
-      setPassword('celebrate2026');
-      setFullName('Ananya Verma');
-    } else {
-      setEmail('aarav@feteflow.ai');
-      setPassword('celebrate2026');
-      setFullName('Aarav Patel');
-    }
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/60 backdrop-blur-sm">
       <div className="relative w-full max-w-md overflow-hidden rounded-3xl border border-brand-border bg-brand-surface shadow-2xl transition-colors duration-200">
@@ -259,29 +246,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               )}
             </button>
           </form>
-
-          {/* Quick Demo Pre-fill options */}
-          <div className="border-t border-brand-border/60 pt-4 text-center">
-            <span className="text-[10px] text-brand-text-secondary uppercase tracking-wider block mb-2">
-              Instant Testing Accounts
-            </span>
-            <div className="flex items-center justify-center gap-2">
-              <button
-                type="button"
-                onClick={() => handleFillDemo('host1')}
-                className="rounded-lg border border-brand-border bg-brand-elevated px-2.5 py-1 text-[11px] font-semibold text-brand-text hover:border-brand-primary transition-colors"
-              >
-                Host Ananya
-              </button>
-              <button
-                type="button"
-                onClick={() => handleFillDemo('host2')}
-                className="rounded-lg border border-brand-border bg-brand-elevated px-2.5 py-1 text-[11px] font-semibold text-brand-text hover:border-brand-primary transition-colors"
-              >
-                Host Aarav
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>

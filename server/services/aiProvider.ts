@@ -24,7 +24,7 @@ function formatCurrency(amount: number, currency: string = 'INR'): string {
 
 export class EventPlanningService {
   private apiKey: string | null = null;
-  private modelName: string = 'gemini-3.5-flash';
+  private modelName: string = 'gemini-2.5-flash';
   private client: GoogleGenerativeAI | null = null;
 
   constructor() {
@@ -33,7 +33,7 @@ export class EventPlanningService {
 
   public refreshConfig(newKey?: string, newModel?: string) {
     this.apiKey = newKey || process.env.GEMINI_API_KEY || null;
-    this.modelName = newModel || process.env.GEMINI_MODEL || 'gemini-3.5-flash';
+    this.modelName = newModel || process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 
     if (this.apiKey && this.apiKey.trim().length > 0) {
       try {
@@ -57,14 +57,20 @@ export class EventPlanningService {
 
   /**
    * Resilient executor that attempts the configured model, and falls back to
-   * high-availability supported Gemini models (gemini-3.5-flash, gemini-3.8-flash)
+   * high-availability supported Gemini models (gemini-2.5-flash, gemini-2.0-flash, gemini-1.5-flash)
    */
   private async callGemini(
     options: { responseMimeType?: string } | undefined,
     fn: (model: any) => Promise<any>
   ): Promise<any> {
     if (!this.client) throw new Error('Gemini client not initialized');
-    const candidates = [this.modelName, 'gemini-3.5-flash', 'gemini-3.8-flash'].filter(Boolean);
+    const candidates = [
+      this.modelName,
+      'gemini-2.5-flash',
+      'gemini-2.0-flash',
+      'gemini-1.5-flash',
+      'gemini-1.5-pro'
+    ].filter(Boolean);
     const unique = Array.from(new Set(candidates));
     let lastError: any = null;
 

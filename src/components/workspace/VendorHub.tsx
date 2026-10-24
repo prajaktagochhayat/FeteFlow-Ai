@@ -45,7 +45,7 @@ export const VendorHub: React.FC<VendorHubProps> = ({ event, onUpdateEvent }) =>
     setGeneratingBrief(true);
     setBriefOutput(null);
     try {
-      const result = await ApiService.generateVendorBrief(event.id || 'evt_default', category);
+      const result = await ApiService.generateVendorBrief(event.id || 'evt_default', category, event);
       setBriefOutput(result);
     } catch (err: any) {
       alert('Failed to generate vendor brief: ' + err.message);

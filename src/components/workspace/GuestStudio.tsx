@@ -82,7 +82,7 @@ export const GuestStudio: React.FC<GuestStudioProps> = ({ event, onUpdateEvent }
   const handleGenerateInvitations = async () => {
     setGeneratingInvites(true);
     try {
-      const result = await ApiService.generateInvitations(event.id || 'evt_default');
+      const result = await ApiService.generateInvitations(event.id || 'evt_default', event);
       setInvitations(result);
     } catch (err: any) {
       alert('Failed to generate invitation copy: ' + err.message);

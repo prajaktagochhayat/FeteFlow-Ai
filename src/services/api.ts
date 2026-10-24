@@ -69,56 +69,61 @@ export class ApiService {
     return this.handleResponse<{ plan: EventPlan; provider: 'gemini' | 'fallback' }>(res);
   }
 
-  public static async chat(eventId: string, message: string, history: Array<{ role: 'user' | 'assistant'; content: string }> = []) {
+  public static async chat(
+    eventId: string,
+    message: string,
+    history: Array<{ role: 'user' | 'assistant'; content: string }> = [],
+    event?: EventPlan
+  ) {
     const res = await fetch(`${API_BASE}/ai/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ eventId, message, history }),
+      body: JSON.stringify({ eventId, message, history, event }),
     });
     return this.handleResponse<{ response: string; provider: 'gemini' | 'fallback' }>(res);
   }
 
-  public static async optimizeBudget(eventId: string, instruction: string) {
+  public static async optimizeBudget(eventId: string, instruction: string, event?: EventPlan) {
     const res = await fetch(`${API_BASE}/ai/optimize-budget`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ eventId, instruction }),
+      body: JSON.stringify({ eventId, instruction, event }),
     });
     return this.handleResponse<{ newAllocations: BudgetAllocationItem[]; explanation: string; provider: 'gemini' | 'fallback' }>(res);
   }
 
-  public static async generateVendorBrief(eventId: string, category: string) {
+  public static async generateVendorBrief(eventId: string, category: string, event?: EventPlan) {
     const res = await fetch(`${API_BASE}/ai/vendor-brief`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ eventId, category }),
+      body: JSON.stringify({ eventId, category, event }),
     });
     return this.handleResponse<{ briefMarkdown: string; questionsToAsk: string[]; estimatedRange: string; provider: 'gemini' | 'fallback' }>(res);
   }
 
-  public static async getTimelineRecovery(eventId: string) {
+  public static async getTimelineRecovery(eventId: string, event?: EventPlan) {
     const res = await fetch(`${API_BASE}/ai/timeline-recovery`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ eventId }),
+      body: JSON.stringify({ eventId, event }),
     });
     return this.handleResponse<{ recoveryActions: string[]; updatedTimeline: TimelineMilestone[]; provider: 'gemini' | 'fallback' }>(res);
   }
 
-  public static async generateInvitations(eventId: string) {
+  public static async generateInvitations(eventId: string, event?: EventPlan) {
     const res = await fetch(`${API_BASE}/ai/invitations`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ eventId }),
+      body: JSON.stringify({ eventId, event }),
     });
     return this.handleResponse<{ formal: string; playful: string; elegant: string; minimal: string; provider: 'gemini' | 'fallback' }>(res);
   }
 
-  public static async getExecutiveSummary(eventId: string) {
+  public static async getExecutiveSummary(eventId: string, event?: EventPlan) {
     const res = await fetch(`${API_BASE}/ai/executive-summary`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ eventId }),
+      body: JSON.stringify({ eventId, event }),
     });
     return this.handleResponse<{ summary: string; topPriorities: string[]; primaryRisks: string[]; provider: 'gemini' | 'fallback' }>(res);
   }

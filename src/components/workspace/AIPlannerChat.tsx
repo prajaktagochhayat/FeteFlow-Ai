@@ -76,7 +76,7 @@ export const AIPlannerChat: React.FC<AIPlannerChatProps> = ({ event }) => {
     try {
       // Check if user asked for executive summary specifically
       if (textToSend.toLowerCase().includes('executive summary')) {
-        const summaryResult = await ApiService.getExecutiveSummary(event.id || 'evt_default');
+        const summaryResult = await ApiService.getExecutiveSummary(event.id || 'evt_default', event);
         const botMsg: ChatMessage = {
           id: 'bot_' + Date.now(),
           role: 'assistant',
@@ -87,7 +87,7 @@ export const AIPlannerChat: React.FC<AIPlannerChatProps> = ({ event }) => {
         setMessages(prev => [...prev, botMsg]);
       } else {
         const historyForApi = messages.map(m => ({ role: m.role, content: m.content }));
-        const result = await ApiService.chat(event.id || 'evt_default', textToSend.trim(), historyForApi);
+        const result = await ApiService.chat(event.id || 'evt_default', textToSend.trim(), historyForApi, event);
         const botMsg: ChatMessage = {
           id: 'bot_' + Date.now(),
           role: 'assistant',

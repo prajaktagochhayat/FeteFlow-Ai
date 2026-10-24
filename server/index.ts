@@ -177,12 +177,12 @@ app.post('/api/ai/generate-plan', async (req: Request, res: Response) => {
 // 2. Contextual AI Chat Assistant
 app.post('/api/ai/chat', async (req: Request, res: Response) => {
   try {
-    const { eventId, message, history = [] } = req.body;
+    const { eventId, message, history = [], event: clientEvent } = req.body;
     if (!eventId || !message) {
       return res.status(400).json({ error: 'eventId and message are required' });
     }
 
-    const event = storageService.getEventById(eventId);
+    const event = clientEvent || storageService.getEventById(eventId);
     if (!event) {
       return res.status(404).json({ error: 'Event not found' });
     }
@@ -197,12 +197,12 @@ app.post('/api/ai/chat', async (req: Request, res: Response) => {
 // 3. Budget Optimization
 app.post('/api/ai/optimize-budget', async (req: Request, res: Response) => {
   try {
-    const { eventId, instruction } = req.body;
+    const { eventId, instruction, event: clientEvent } = req.body;
     if (!eventId || !instruction) {
       return res.status(400).json({ error: 'eventId and instruction are required' });
     }
 
-    const event = storageService.getEventById(eventId);
+    const event = clientEvent || storageService.getEventById(eventId);
     if (!event) {
       return res.status(404).json({ error: 'Event not found' });
     }
@@ -217,12 +217,12 @@ app.post('/api/ai/optimize-budget', async (req: Request, res: Response) => {
 // 4. Vendor Brief & RFC Generator
 app.post('/api/ai/vendor-brief', async (req: Request, res: Response) => {
   try {
-    const { eventId, category } = req.body;
+    const { eventId, category, event: clientEvent } = req.body;
     if (!eventId || !category) {
       return res.status(400).json({ error: 'eventId and category are required' });
     }
 
-    const event = storageService.getEventById(eventId);
+    const event = clientEvent || storageService.getEventById(eventId);
     if (!event) {
       return res.status(404).json({ error: 'Event not found' });
     }
@@ -237,17 +237,17 @@ app.post('/api/ai/vendor-brief', async (req: Request, res: Response) => {
 // 5. Timeline Recovery Assistant
 app.post('/api/ai/timeline-recovery', async (req: Request, res: Response) => {
   try {
-    const { eventId } = req.body;
+    const { eventId, event: clientEvent } = req.body;
     if (!eventId) {
       return res.status(400).json({ error: 'eventId is required' });
     }
 
-    const event = storageService.getEventById(eventId);
+    const event = clientEvent || storageService.getEventById(eventId);
     if (!event) {
       return res.status(404).json({ error: 'Event not found' });
     }
 
-    const overdue = event.timeline.filter(t => !t.completed && new Date(t.dueDate) < new Date());
+    const overdue = event.timeline.filter((t: any) => !t.completed && new Date(t.dueDate) < new Date());
     const result = await aiService.generateTimelineRecovery(event, overdue);
     res.json(result);
   } catch (err: any) {
@@ -258,12 +258,12 @@ app.post('/api/ai/timeline-recovery', async (req: Request, res: Response) => {
 // 6. Invitation Copy Generator
 app.post('/api/ai/invitations', async (req: Request, res: Response) => {
   try {
-    const { eventId } = req.body;
+    const { eventId, event: clientEvent } = req.body;
     if (!eventId) {
       return res.status(400).json({ error: 'eventId is required' });
     }
 
-    const event = storageService.getEventById(eventId);
+    const event = clientEvent || storageService.getEventById(eventId);
     if (!event) {
       return res.status(404).json({ error: 'Event not found' });
     }
@@ -278,12 +278,12 @@ app.post('/api/ai/invitations', async (req: Request, res: Response) => {
 // 7. Executive Summary & Risk Overview
 app.post('/api/ai/executive-summary', async (req: Request, res: Response) => {
   try {
-    const { eventId } = req.body;
+    const { eventId, event: clientEvent } = req.body;
     if (!eventId) {
       return res.status(400).json({ error: 'eventId is required' });
     }
 
-    const event = storageService.getEventById(eventId);
+    const event = clientEvent || storageService.getEventById(eventId);
     if (!event) {
       return res.status(404).json({ error: 'Event not found' });
     }

@@ -57,23 +57,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   return (
-    <aside className="flex h-full w-full flex-col border-r border-brand-border bg-brand-surface p-4 transition-colors duration-200">
+    <aside className="flex h-full w-full flex-col border-r border-brand-border bg-brand-surface p-4 transition-colors duration-200 overflow-y-auto overflow-x-hidden">
       {/* Brand Header */}
-      <div className="mb-4 flex items-center justify-between pb-3 border-b border-brand-border/60">
+      <div className="shrink-0 mb-3 flex items-center justify-between pb-3 border-b border-brand-border/60">
         <BrandLogo size="sm" showTagline={false} />
       </div>
 
       {/* Return to Landing */}
       <button
         onClick={onBackToLanding}
-        className="mb-4 flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs font-medium text-brand-text-secondary transition-colors hover:text-brand-primary"
+        className="shrink-0 mb-3 flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs font-medium text-brand-text-secondary transition-colors hover:text-brand-primary"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
         <span>Public Landing</span>
       </button>
 
       {/* Event Selector Card */}
-      <div className="relative mb-5">
+      <div className="shrink-0 relative mb-4">
         <button
           onClick={() => setDropdownOpen(!dropdownOpen)}
           className="flex w-full items-center justify-between rounded-xl border border-brand-border bg-brand-elevated/70 p-3 text-left transition-all hover:border-brand-primary/50"
@@ -137,7 +137,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Main Navigation List */}
-      <nav className="flex-1 space-y-1">
+      <nav className="shrink-0 space-y-1">
         {navItems.map(item => {
           const Icon = item.icon;
           const isActive = currentTab === item.id;
@@ -169,8 +169,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         })}
       </nav>
 
-      {/* Quick Create Action Card */}
-      <div className="mt-auto pt-4 space-y-3">
+      {/* Quick Create Action Card & User Card */}
+      <div className="shrink-0 mt-4 pt-4 pb-2 space-y-3 border-t border-brand-border/60">
         <button
           onClick={onOpenWizard}
           className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-brand-primary/60 bg-brand-soft/50 py-2.5 text-xs font-semibold text-brand-deep transition-all hover:bg-brand-soft hover:scale-[1.01] active:scale-[0.99]"

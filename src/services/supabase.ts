@@ -60,9 +60,9 @@ function mapRowToEventPlan(row: any): EventPlan {
 
 // Helper to convert client model to database row
 function mapEventPlanToRow(userId: string, plan: EventPlan): any {
-  return {
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId);
+  const row: any = {
     id: plan.id || 'evt_' + Date.now(),
-    user_id: userId,
     name: plan.name,
     event_type: plan.eventType,
     date: plan.date,
@@ -81,6 +81,11 @@ function mapEventPlanToRow(userId: string, plan: EventPlan): any {
     next_actions: plan.nextActions || [],
     guests: plan.guests || [],
   };
+
+  if (isUuid) {
+    row.user_id = userId;
+  }
+  return row;
 }
 
 // Local Storage Multi-User Store Key
@@ -94,10 +99,17 @@ export class CelebrationDataService {
    */
   public static async getCelebrations(userId: string): Promise<EventPlan[]> {
     if (isSupabaseConfigured && supabase) {
-      const { data, error } = await supabase
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId);
+      let query = supabase
         .from('celebrations')
         .select('*')
         .order('created_at', { ascending: false });
+
+      if (isUuid) {
+        query = query.eq('user_id', userId);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error('Supabase getCelebrations error:', error);

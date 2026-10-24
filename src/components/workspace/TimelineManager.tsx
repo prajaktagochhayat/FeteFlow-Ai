@@ -89,7 +89,7 @@ export const TimelineManager: React.FC<TimelineManagerProps> = ({ event, onUpdat
     setIsRecovering(true);
     setRecoveryData(null);
     try {
-      const result = await ApiService.getTimelineRecovery(event.id || 'evt_default');
+      const result = await ApiService.getTimelineRecovery(event.id || 'evt_default', event);
       setRecoveryData(result);
     } catch (err: any) {
       alert('Recovery assistant error: ' + err.message);

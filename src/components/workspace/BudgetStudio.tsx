@@ -56,7 +56,7 @@ export const BudgetStudio: React.FC<BudgetStudioProps> = ({ event, onUpdateEvent
     setOptimizing(true);
     setProposedResult(null);
     try {
-      const result = await ApiService.optimizeBudget(event.id || 'evt_default', optimizerQuery);
+      const result = await ApiService.optimizeBudget(event.id || 'evt_default', optimizerQuery, event);
       setProposedResult(result);
     } catch (err: any) {
       alert('Budget optimization failed: ' + err.message);

@@ -36,11 +36,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         try {
           const { data: { session } } = await supabase.auth.getSession();
           if (mounted && session?.user) {
-            setUser({
+            const activeUser: AuthUser = {
               id: session.user.id,
               email: session.user.email || '',
               fullName: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Celebration Host',
-            });
+            };
+            setUser(activeUser);
+            localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(activeUser));
           }
         } catch (err) {
           console.warn('Supabase session fetch error:', err);
@@ -52,13 +54,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
           if (mounted) {
             if (session?.user) {
-              setUser({
+              const activeUser: AuthUser = {
                 id: session.user.id,
                 email: session.user.email || '',
                 fullName: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Celebration Host',
-              });
+              };
+              setUser(activeUser);
+              localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(activeUser));
             } else {
               setUser(null);
+              localStorage.removeItem(CURRENT_USER_KEY);
             }
             setLoading(false);
           }
@@ -100,11 +105,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         });
         if (error) throw new Error(error.message);
         if (data.user) {
-          setUser({
+          const activeUser: AuthUser = {
             id: data.user.id,
             email: data.user.email || '',
             fullName: data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || 'Celebration Host',
-          });
+          };
+          setUser(activeUser);
+          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(activeUser));
         }
         return;
       }
@@ -160,11 +167,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         });
         if (error) throw new Error(error.message);
         if (data.user) {
-          setUser({
-            id: data.user.id,
-            email: data.user.email || '',
-            fullName: fullName.trim() || data.user.email?.split('@')[0] || 'Celebration Host',
-          });
+          if (data.session) {
+            const activeUser: AuthUser = {
+              id: data.user.id,
+              email: data.user.email || '',
+              fullName: fullName.trim() || data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || 'Celebration Host',
+            };
+            setUser(activeUser);
+            localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(activeUser));
+          } else {
+            throw new Error('Account created! Please check your email to verify your account, or disable "Confirm email" in your Supabase Auth dashboard for instant login.');
+          }
         }
         return;
       }
