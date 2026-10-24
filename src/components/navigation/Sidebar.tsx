@@ -12,9 +12,13 @@ import {
   PlusCircle,
   ChevronDown,
   ArrowLeft,
+  User,
+  LogOut,
+  LogIn,
 } from 'lucide-react';
 import { WorkspaceTab, EventPlan } from '../../types';
 import { BrandLogo } from '../common/BrandLogo';
+import { useAuth } from '../../context/AuthContext';
 
 interface SidebarProps {
   currentTab: WorkspaceTab;
@@ -24,6 +28,7 @@ interface SidebarProps {
   onSelectEvent: (event: EventPlan) => void;
   onOpenWizard: () => void;
   onBackToLanding: () => void;
+  onOpenAuth?: (mode: 'signin' | 'signup') => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -34,7 +39,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onSelectEvent,
   onOpenWizard,
   onBackToLanding,
+  onOpenAuth,
 }) => {
+  const { user, isAuthenticated, signOut } = useAuth();
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
 
   const navItems = [
@@ -163,7 +170,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </nav>
 
       {/* Quick Create Action Card */}
-      <div className="mt-auto pt-4">
+      <div className="mt-auto pt-4 space-y-3">
         <button
           onClick={onOpenWizard}
           className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-brand-primary/60 bg-brand-soft/50 py-2.5 text-xs font-semibold text-brand-deep transition-all hover:bg-brand-soft hover:scale-[1.01] active:scale-[0.99]"
@@ -171,6 +178,36 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <Sparkles className="h-3.5 w-3.5 text-brand-primary" />
           <span>New AI Celebration</span>
         </button>
+
+        {/* Authenticated User Account Strip */}
+        {isAuthenticated ? (
+          <div className="flex items-center justify-between rounded-2xl border border-brand-border bg-brand-elevated/40 p-2.5">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-brand-primary text-xs font-bold text-white shadow-sm">
+                {user?.fullName?.slice(0, 1).toUpperCase() || 'U'}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-xs font-bold text-brand-text">{user?.fullName}</p>
+                <p className="truncate text-[10px] text-brand-text-secondary">{user?.email}</p>
+              </div>
+            </div>
+            <button
+              onClick={() => signOut()}
+              title="Sign Out"
+              className="rounded-lg p-1.5 text-brand-text-secondary hover:bg-red-500/10 hover:text-red-500 transition-colors"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => onOpenAuth?.('signin')}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-brand-border bg-brand-surface py-2 text-xs font-semibold text-brand-text hover:border-brand-primary transition-colors"
+          >
+            <LogIn className="h-3.5 w-3.5 text-brand-primary" />
+            <span>Sign In / Register</span>
+          </button>
+        )}
       </div>
     </aside>
   );

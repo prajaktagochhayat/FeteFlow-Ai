@@ -1,6 +1,18 @@
 import { EventPlan, EventWizardInput, AppSettings, BudgetAllocationItem, TimelineMilestone } from '../types';
+import { CelebrationDataService } from './supabase';
 
 const API_BASE = '/api';
+
+function getCurrentUserId(): string {
+  try {
+    const raw = localStorage.getItem('feteflow_active_user_session');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed?.id) return parsed.id;
+    }
+  } catch {}
+  return 'guest';
+}
 
 export class ApiService {
   private static async handleResponse<T>(res: Response): Promise<T> {
@@ -17,40 +29,34 @@ export class ApiService {
     return this.handleResponse<{ status: string; ai: any }>(res);
   }
 
-  // Events
-  public static async getEvents(): Promise<EventPlan[]> {
-    const res = await fetch(`${API_BASE}/events`);
-    return this.handleResponse<EventPlan[]>(res);
+  // Events (User Isolated via Supabase / Isolated Local Storage)
+  public static async getEvents(userId?: string): Promise<EventPlan[]> {
+    const uid = userId || getCurrentUserId();
+    return CelebrationDataService.getCelebrations(uid);
   }
 
-  public static async getEvent(id: string): Promise<EventPlan> {
-    const res = await fetch(`${API_BASE}/events/${id}`);
-    return this.handleResponse<EventPlan>(res);
+  public static async getEvent(id: string, userId?: string): Promise<EventPlan> {
+    const uid = userId || getCurrentUserId();
+    const events = await CelebrationDataService.getCelebrations(uid);
+    const found = events.find(e => e.id === id);
+    if (!found) throw new Error('Celebration not found');
+    return found;
   }
 
-  public static async createEvent(event: EventPlan): Promise<EventPlan> {
-    const res = await fetch(`${API_BASE}/events`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(event),
-    });
-    return this.handleResponse<EventPlan>(res);
+  public static async createEvent(event: EventPlan, userId?: string): Promise<EventPlan> {
+    const uid = userId || getCurrentUserId();
+    return CelebrationDataService.createCelebration(uid, event);
   }
 
-  public static async updateEvent(id: string, updates: Partial<EventPlan>): Promise<EventPlan> {
-    const res = await fetch(`${API_BASE}/events/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updates),
-    });
-    return this.handleResponse<EventPlan>(res);
+  public static async updateEvent(id: string, updates: Partial<EventPlan>, userId?: string): Promise<EventPlan> {
+    const uid = userId || getCurrentUserId();
+    return CelebrationDataService.updateCelebration(uid, id, updates);
   }
 
-  public static async deleteEvent(id: string): Promise<{ success: boolean; id: string }> {
-    const res = await fetch(`${API_BASE}/events/${id}`, {
-      method: 'DELETE',
-    });
-    return this.handleResponse<{ success: boolean; id: string }>(res);
+  public static async deleteEvent(id: string, userId?: string): Promise<{ success: boolean; id: string }> {
+    const uid = userId || getCurrentUserId();
+    await CelebrationDataService.deleteCelebration(uid, id);
+    return { success: true, id };
   }
 
   // AI Operations

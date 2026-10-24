@@ -4,6 +4,8 @@ import { Sidebar } from './components/navigation/Sidebar';
 import { LandingPage } from './components/landing/LandingPage';
 import { CustomCursor } from './components/common/CustomCursor';
 import { EventWizardModal } from './components/wizard/EventWizardModal';
+import { AuthModal } from './components/auth/AuthModal';
+import { AuthProvider, useAuth } from './context/AuthContext';
 
 // Workspace Studios
 import { DashboardOverview } from './components/workspace/DashboardOverview';
@@ -19,7 +21,13 @@ import { SettingsView } from './components/workspace/SettingsView';
 import { EventPlan, WorkspaceTab } from './types';
 import { ApiService } from './services/api';
 
-export const App: React.FC = () => {
+const MainApp: React.FC = () => {
+  const { user, isAuthenticated } = useAuth();
+
+  // Auth Modal State
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+
   // Theme management with persistence
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     const saved = localStorage.getItem('feteflow_theme');
@@ -50,14 +58,21 @@ export const App: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<EventPlan | null>(null);
   const [loadingEvents, setLoadingEvents] = useState(true);
 
-  // Fetch initial events
+  // Fetch events for active user session
   const loadEvents = async () => {
     try {
       setLoadingEvents(true);
-      const data = await ApiService.getEvents();
+      if (!user) {
+        setEvents([]);
+        setSelectedEvent(null);
+        return;
+      }
+      const data = await ApiService.getEvents(user.id);
       setEvents(data);
-      if (data.length > 0 && !selectedEvent) {
+      if (data.length > 0) {
         setSelectedEvent(data[0]);
+      } else {
+        setSelectedEvent(null);
       }
     } catch (err) {
       console.error('Failed to load events:', err);
@@ -68,7 +83,7 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     loadEvents();
-  }, []);
+  }, [user?.id]);
 
   const handleEventCreated = (newEvent: EventPlan) => {
     setEvents(prev => [newEvent, ...prev]);
@@ -120,13 +135,36 @@ export const App: React.FC = () => {
     }, 50);
   };
 
+  const handleOpenWizard = () => {
+    if (!isAuthenticated) {
+      setAuthMode('signup');
+      setIsAuthOpen(true);
+      return;
+    }
+    setIsWizardOpen(true);
+  };
+
+  const handleEnterWorkspace = () => {
+    if (!isAuthenticated) {
+      setAuthMode('signin');
+      setIsAuthOpen(true);
+      return;
+    }
+    setViewMode('workspace');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col font-sans transition-colors duration-200">
       {/* Global Top Navbar */}
       <Navbar
-        onOpenWizard={() => setIsWizardOpen(true)}
+        onOpenWizard={handleOpenWizard}
         onNavigateLandingSection={handleNavigateLandingSection}
-        onEnterWorkspace={() => setViewMode('workspace')}
+        onEnterWorkspace={handleEnterWorkspace}
+        onOpenAuth={(mode) => {
+          setAuthMode(mode);
+          setIsAuthOpen(true);
+        }}
         theme={theme}
         onToggleTheme={toggleTheme}
         isInWorkspace={viewMode === 'workspace'}
@@ -136,7 +174,7 @@ export const App: React.FC = () => {
       {viewMode === 'landing' ? (
         <main className="flex-1">
           <LandingPage
-            onOpenWizard={() => setIsWizardOpen(true)}
+            onOpenWizard={handleOpenWizard}
             onSelectDemoEvent={handleSelectDemoEvent}
             demoEvents={events}
           />
@@ -152,8 +190,12 @@ export const App: React.FC = () => {
               events={events}
               selectedEvent={selectedEvent}
               onSelectEvent={setSelectedEvent}
-              onOpenWizard={() => setIsWizardOpen(true)}
+              onOpenWizard={handleOpenWizard}
               onBackToLanding={() => setViewMode('landing')}
+              onOpenAuth={(mode) => {
+                setAuthMode(mode);
+                setIsAuthOpen(true);
+              }}
             />
           </div>
 
@@ -261,7 +303,7 @@ export const App: React.FC = () => {
                     Start a brand-new celebration tailored to your dates, guests, and Indian Rupee budget ceiling. Powered live by your connected Gemini GenAI.
                   </p>
                   <button
-                    onClick={() => setIsWizardOpen(true)}
+                    onClick={handleOpenWizard}
                     className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-brand-primary px-8 py-3.5 text-xs font-bold text-white shadow-lg shadow-brand-primary/25 transition-all hover:bg-brand-primary-hover hover:scale-[1.02] active:scale-[0.98]"
                   >
                     <span>✦ Plan Celebration with AI</span>
@@ -280,8 +322,26 @@ export const App: React.FC = () => {
         onEventCreated={handleEventCreated}
       />
 
+      {/* Authentication Modal (Sign In / Register) */}
+      <AuthModal
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        defaultMode={authMode}
+        onSuccess={() => setViewMode('workspace')}
+      />
+
       {/* Custom Magnetic Cursor (Rendered on top of all modals and views) */}
       <CustomCursor />
     </div>
   );
 };
+
+export const App: React.FC = () => {
+  return (
+    <AuthProvider>
+      <MainApp />
+    </AuthProvider>
+  );
+};
+
+export default App;

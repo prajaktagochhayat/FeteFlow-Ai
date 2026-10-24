@@ -1,250 +1,11 @@
 [
   {
-    "id": "evt_1793117491230",
+    "id": "evt_1793121562419",
     "name": "Milestone Birthday Bash",
     "eventType": "birthday",
     "date": "2026-12-26",
-    "location": "Goa beachfront",
-    "guestCount": 100,
-    "setting": "outdoor",
-    "duration": "1 Day",
-    "priorities": [
-      "Venue & Architecture",
-      "Catering & Beverages",
-      "Atmosphere & Decor"
-    ],
-    "atmosphereVision": "Cozy neighborhood harvest fair with acoustic music",
-    "eventConcept": {
-      "title": "Glow & Revelry Celebration",
-      "description": "A thoughtfully curated birthday experience combining refined aesthetics with heartfelt hospitality, tailored for 100 cherished guests.",
-      "theme": "Midnight Celebration & Confetti",
-      "style": "bohemian",
-      "colorPalette": [
-        "#FF7C91",
-        "#FFB800",
-        "#7655E8",
-        "#00D2D3",
-        "#F8F5FF"
-      ],
-      "creativeDirection": "Balance bold focal moments with intimate seating nooks. Ensure warm lighting, organic floral textures, and seamless pacing from welcome to departure."
-    },
-    "budget": {
-      "currency": "INR",
-      "totalBudget": 500000,
-      "allocations": [
-        {
-          "category": "Venue & Experience Space",
-          "amount": 140000,
-          "reason": "Private party lounge or outdoor venue",
-          "actualCost": 0
-        },
-        {
-          "category": "Custom Cake & Gourmet Bites",
-          "amount": 160000,
-          "reason": "Sculptural tiered cake and interactive culinary stations",
-          "actualCost": 0
-        },
-        {
-          "category": "Bespoke Decor & Balloon Art",
-          "amount": 100000,
-          "reason": "High-impact entrance balloon garland and backdrop",
-          "actualCost": 0
-        },
-        {
-          "category": "Entertainment & DJ",
-          "amount": 60000,
-          "reason": "Music curation and interactive celebration games",
-          "actualCost": 0
-        },
-        {
-          "category": "Keepsakes & Photography",
-          "amount": 40000,
-          "reason": "Photo moment setup and curated guest favors",
-          "actualCost": 0
-        }
-      ]
-    },
-    "timeline": [
-      {
-        "id": "tml_1",
-        "title": "Lock Primary Venue & Contracts",
-        "description": "Confirm deposit and date exclusivity",
-        "dueDate": "2026-10-27",
-        "priority": "high",
-        "category": "Venue",
-        "completed": false
-      },
-      {
-        "id": "tml_2",
-        "title": "Curate Menu & Beverage Tastings",
-        "description": "Finalize dietary alternatives and service style",
-        "dueDate": "2026-11-11",
-        "priority": "high",
-        "category": "Catering",
-        "completed": false
-      },
-      {
-        "id": "tml_3",
-        "title": "Send Digital Invitations & Collect RSVPs",
-        "description": "Distribute invitation copy and setup response tracking",
-        "dueDate": "2026-11-26",
-        "priority": "medium",
-        "category": "Guests",
-        "completed": false
-      },
-      {
-        "id": "tml_4",
-        "title": "Atmosphere & Decor Concept Finalization",
-        "description": "Review floral swatches, balloon arrangements, and lighting",
-        "dueDate": "2026-12-12",
-        "priority": "medium",
-        "category": "Decor",
-        "completed": false
-      },
-      {
-        "id": "tml_5",
-        "title": "Final Headcount & Vendor Brief Dispatch",
-        "description": "Deliver final counts and schedule run-sheet to all vendors",
-        "dueDate": "2026-12-19",
-        "priority": "high",
-        "category": "Operations",
-        "completed": false
-      },
-      {
-        "id": "tml_6",
-        "title": "On-Site Walkthrough & Sound Check",
-        "description": "Verify power points, arrival signage, and rain contingencies",
-        "dueDate": "2026-12-25",
-        "priority": "high",
-        "category": "Rehearsal",
-        "completed": false
-      }
-    ],
-    "vendorChecklist": [
-      {
-        "id": "vnd_1",
-        "category": "Venue & Location",
-        "tasks": [
-          "Inquire about load-in time restrictions",
-          "Confirm sound curfew ordinances",
-          "Review inclement weather fallback spaces"
-        ],
-        "questionsToAsk": [
-          "Are outside caterers permitted?",
-          "What security deposits are required for cleanup?"
-        ],
-        "status": "researching",
-        "notes": "",
-        "quotedAmount": 0
-      },
-      {
-        "id": "vnd_2",
-        "category": "Catering & Dining",
-        "tasks": [
-          "Request custom tasting menu",
-          "Accommodate gluten-free and vegan guests",
-          "Confirm bar licensing and glassware provision"
-        ],
-        "questionsToAsk": [
-          "Do you provide staffing and tableware?",
-          "How are leftover portions managed?"
-        ],
-        "status": "researching",
-        "notes": "",
-        "quotedAmount": 0
-      },
-      {
-        "id": "vnd_3",
-        "category": "Atmosphere & Decor",
-        "tasks": [
-          "Measure ceiling height for balloon or floral installations",
-          "Select linen swatches matching palette",
-          "Confirm candle open-flame guidelines"
-        ],
-        "questionsToAsk": [
-          "Do you handle post-event teardown?",
-          "Can elements be repurposed between ceremony and reception?"
-        ],
-        "status": "researching",
-        "notes": "",
-        "quotedAmount": 0
-      },
-      {
-        "id": "vnd_4",
-        "category": "Photography & Cinema",
-        "tasks": [
-          "Prepare family and friend shot list",
-          "Confirm golden hour outdoor portrait timing",
-          "Review high-resolution delivery rights"
-        ],
-        "questionsToAsk": [
-          "How soon are sneak peek photos available?",
-          "Do you have backup camera bodies and audio recorders?"
-        ],
-        "status": "researching",
-        "notes": "",
-        "quotedAmount": 0
-      }
-    ],
-    "personalizedIdeas": [
-      {
-        "id": "idea_1",
-        "title": "Sculptural Metallic Balloon Archway",
-        "description": "Organic asymmetrical arch mixing matte lilac, rose gold chrome, and clear confetti spheres.",
-        "category": "Visual Statement",
-        "estimatedCost": 25000,
-        "reason": "Instant photogenic centerpiece for arrival moments.",
-        "isFavorite": true
-      },
-      {
-        "id": "idea_2",
-        "title": "Interactive Midnight Dessert Wall",
-        "description": "A backlit peg wall featuring artisanal glazed treats and personalized congratulatory notes.",
-        "category": "Culinary Experience",
-        "estimatedCost": 20000,
-        "reason": "Engaging sweet-treat station that delights guests late in the evening.",
-        "isFavorite": false
-      },
-      {
-        "id": "idea_3",
-        "title": "Personalized Celebration Trivia Duel",
-        "description": "Curated 10-question mobile trivia about the guest of honor with playful prize pins.",
-        "category": "Entertainment",
-        "estimatedCost": 5000,
-        "reason": "Breaks the ice and connects disparate friend groups instantly.",
-        "isFavorite": true
-      }
-    ],
-    "risks": [
-      {
-        "description": "Potential seasonal weather changes for outdoor elements",
-        "mitigation": "Reserve clear-top canopy or confirm indoor alternate salon 72 hours prior."
-      },
-      {
-        "description": "Guest RSVP attrition or unnotified plus-ones",
-        "mitigation": "Set dietary buffer of 5% with caterer and send digital SMS reminder 5 days ahead."
-      },
-      {
-        "description": "Peak hour vendor arrival congestion",
-        "mitigation": "Stagger vendor load-in windows in 30-minute intervals with a designated coordinator."
-      }
-    ],
-    "nextActions": [
-      "Review and lock initial venue deposits",
-      "Finalize catering menu tasting schedule",
-      "Share personalized invitation copy with co-hosts"
-    ],
-    "guests": [],
-    "createdAt": "2026-10-27T16:11:33.011Z",
-    "updatedAt": "2026-10-27T16:11:33.011Z"
-  },
-  {
-    "id": "evt_1793117437684",
-    "name": "Milestone Birthday Bash",
-    "eventType": "birthday",
-    "date": "2026-12-26",
-    "location": "Goa beachfront",
-    "guestCount": 100,
+    "location": "goa",
+    "guestCount": 80,
     "setting": "outdoor",
     "duration": "1 Day",
     "priorities": [
@@ -254,51 +15,63 @@
     ],
     "atmosphereVision": "Minimalist contemporary rooftop with jazz",
     "eventConcept": {
-      "title": "Glow & Revelry Celebration",
-      "description": "A thoughtfully curated birthday experience combining refined aesthetics with heartfelt hospitality, tailored for 100 cherished guests.",
-      "theme": "Midnight Celebration & Confetti",
-      "style": "bohemian",
+      "title": "Breeze & Bass: A Sunset Velvet Soirée",
+      "description": "An intimate, sophisticated birthday celebration atop a sleek Goan rooftop overlooking the Arabian Sea coast. Combining clean architectural lines with romantic warm lighting, rich jazz soundscapes, and an epicurean multi-course tasting experience.",
+      "theme": "Modern Coastal Elegance with Contemporary Jazz",
+      "style": "Modern Romantic Chic",
       "colorPalette": [
-        "#FF7C91",
-        "#FFB800",
-        "#7655E8",
-        "#00D2D3",
-        "#F8F5FF"
+        "#C8A2C8",
+        "#F88379",
+        "#FFFFF0",
+        "#D8B4F8",
+        "#2B1B17"
       ],
-      "creativeDirection": "Balance bold focal moments with intimate seating nooks. Ensure warm lighting, organic floral textures, and seamless pacing from welcome to departure."
+      "creativeDirection": "Emphasize negative space, low-profile romantic floral arrangements in Lilac and Soft Coral against Ivory linen backdrop. Low warm architectural lighting integrated with universal step-free access across all zones."
     },
     "budget": {
       "currency": "INR",
       "totalBudget": 500000,
       "allocations": [
         {
-          "category": "Venue & Experience Space",
-          "amount": 140000,
-          "reason": "Private party lounge or outdoor venue",
+          "category": "Venue & Rooftop Architecture",
+          "amount": 135000,
+          "reason": "Exclusive rooftop venue rental in Goa with step-free elevator access and scenic ocean views. (Reallocated surplus from decor)",
           "actualCost": 0
         },
         {
-          "category": "Custom Cake & Gourmet Bites",
-          "amount": 160000,
-          "reason": "Sculptural tiered cake and interactive culinary stations",
+          "category": "Catering & Craft Beverages",
+          "amount": 180000,
+          "reason": "Seasonal 5-course tasting menu for 80 guests along with artisanal botanical cocktails and wine pairing.",
           "actualCost": 0
         },
         {
-          "category": "Bespoke Decor & Balloon Art",
-          "amount": 100000,
-          "reason": "High-impact entrance balloon garland and backdrop",
+          "category": "Atmosphere, Lighting & Decor",
+          "amount": 85000,
+          "reason": "Minimalist structural decor, lilac/soft coral floral installations, warm LED lighting, and ivory tablescapes. (Reduced by 15% with optimized seasonal alternatives)",
           "actualCost": 0
         },
         {
-          "category": "Entertainment & DJ",
-          "amount": 60000,
-          "reason": "Music curation and interactive celebration games",
-          "actualCost": 0
-        },
-        {
-          "category": "Keepsakes & Photography",
+          "category": "Live Entertainment & Sound",
           "amount": 40000,
-          "reason": "Photo moment setup and curated guest favors",
+          "reason": "A 4-piece live jazz ensemble, acoustic setup, and subtle ambient sound engineering.",
+          "actualCost": 0
+        },
+        {
+          "category": "Photography & Videography",
+          "amount": 35000,
+          "reason": "Boutique editorial photography focusing on candid moments, architecture, and mood.",
+          "actualCost": 0
+        },
+        {
+          "category": "Universal Accessibility Setup",
+          "amount": 15000,
+          "reason": "Custom ramps, accessible seating configurations, high-contrast menus, and dedicated staff support.",
+          "actualCost": 0
+        },
+        {
+          "category": "Permits & Contingency",
+          "amount": 10000,
+          "reason": "Music licensing permits, emergency backup power, and buffer fund.",
           "actualCost": 0
         }
       ]
@@ -306,71 +79,71 @@
     "timeline": [
       {
         "id": "tml_1",
-        "title": "Lock Primary Venue & Contracts",
-        "description": "Confirm deposit and date exclusivity",
-        "dueDate": "2026-10-27",
+        "title": "Venue Confirmation & Site Accessibility Audit",
+        "description": "Shortlist and lock down accessible rooftop venue in Goa with high-capacity elevator and step-free restrooms.",
+        "dueDate": "2026-10-15",
         "priority": "high",
-        "category": "Venue",
+        "category": "Planning",
         "completed": false
       },
       {
         "id": "tml_2",
-        "title": "Curate Menu & Beverage Tastings",
-        "description": "Finalize dietary alternatives and service style",
-        "dueDate": "2026-11-11",
+        "title": "Catering Partner & Tasting Session",
+        "description": "Finalize seasonal multi-course menu and botanical cocktail pairings with chef team.",
+        "dueDate": "2026-10-30",
         "priority": "high",
         "category": "Catering",
         "completed": false
       },
       {
         "id": "tml_3",
-        "title": "Send Digital Invitations & Collect RSVPs",
-        "description": "Distribute invitation copy and setup response tracking",
-        "dueDate": "2026-11-26",
+        "title": "Entertainment & Decor Design Freeze",
+        "description": "Contract 4-piece jazz band and approve 3D decor layout featuring modern romantic chic elements.",
+        "dueDate": "2026-11-15",
         "priority": "medium",
-        "category": "Guests",
+        "category": "Design",
         "completed": false
       },
       {
         "id": "tml_4",
-        "title": "Atmosphere & Decor Concept Finalization",
-        "description": "Review floral swatches, balloon arrangements, and lighting",
-        "dueDate": "2026-12-12",
-        "priority": "medium",
-        "category": "Decor",
+        "title": "Invitations & Accessibility RSVPs",
+        "description": "Dispatch digital invitations capturing dietary requirements and specific mobility/accessibility needs.",
+        "dueDate": "2026-11-01",
+        "priority": "high",
+        "category": "Guest Management",
         "completed": false
       },
       {
         "id": "tml_5",
-        "title": "Final Headcount & Vendor Brief Dispatch",
-        "description": "Deliver final counts and schedule run-sheet to all vendors",
-        "dueDate": "2026-12-19",
-        "priority": "high",
+        "title": "Final Walkthrough & Permit Clearance",
+        "description": "Conduct venue walkthrough, verify ramp gradients, sound levels, and secure local PPL/IPRS permits.",
+        "dueDate": "2026-12-15",
+        "priority": "medium",
         "category": "Operations",
         "completed": false
       },
       {
         "id": "tml_6",
-        "title": "On-Site Walkthrough & Sound Check",
-        "description": "Verify power points, arrival signage, and rain contingencies",
-        "dueDate": "2026-12-25",
+        "title": "Milestone Birthday Bash Execution",
+        "description": "Event day execution from rooftop golden hour sunset to evening jazz and dining.",
+        "dueDate": "2026-12-26",
         "priority": "high",
-        "category": "Rehearsal",
+        "category": "Event Day",
         "completed": false
       }
     ],
     "vendorChecklist": [
       {
         "id": "vnd_1",
-        "category": "Venue & Location",
+        "category": "Venue & Facilities",
         "tasks": [
-          "Inquire about load-in time restrictions",
-          "Confirm sound curfew ordinances",
-          "Review inclement weather fallback spaces"
+          "Confirm generator power backup capacity for sound and lighting",
+          "Inspect elevator dimensions and ramp access slopes",
+          "Verify outdoor wind mitigation barriers"
         ],
         "questionsToAsk": [
-          "Are outside caterers permitted?",
-          "What security deposits are required for cleanup?"
+          "Is there uninterrupted elevator access from parking to rooftop for mobility-impaired guests?",
+          "What are the precise music decibel cutoff times for outdoor rooftops in December?"
         ],
         "status": "researching",
         "notes": "",
@@ -378,15 +151,15 @@
       },
       {
         "id": "vnd_2",
-        "category": "Catering & Dining",
+        "category": "Catering & Mixology",
         "tasks": [
-          "Request custom tasting menu",
-          "Accommodate gluten-free and vegan guests",
-          "Confirm bar licensing and glassware provision"
+          "Schedule menu tasting for seasonal local produce incorporation",
+          "Design signature Lilac Spritz and Coral Botanical mocktails",
+          "Plan synchronous multi-course service execution for 80 guests"
         ],
         "questionsToAsk": [
-          "Do you provide staffing and tableware?",
-          "How are leftover portions managed?"
+          "How will temperature integrity be maintained for outdoor multi-course plating?",
+          "Can menus be printed in high-contrast fonts and offered digitally via QR code with screen-reader compatibility?"
         ],
         "status": "researching",
         "notes": "",
@@ -394,31 +167,15 @@
       },
       {
         "id": "vnd_3",
-        "category": "Atmosphere & Decor",
+        "category": "Decor & Lighting",
         "tasks": [
-          "Measure ceiling height for balloon or floral installations",
-          "Select linen swatches matching palette",
-          "Confirm candle open-flame guidelines"
+          "Source wind-proof hurricane lamps for candles",
+          "Build low-profile, non-obstructive floral arrangements in Ivory, Soft Coral, and Lilac",
+          "Ensure clear 5-foot walkways between all dining tables"
         ],
         "questionsToAsk": [
-          "Do you handle post-event teardown?",
-          "Can elements be repurposed between ceremony and reception?"
-        ],
-        "status": "researching",
-        "notes": "",
-        "quotedAmount": 0
-      },
-      {
-        "id": "vnd_4",
-        "category": "Photography & Cinema",
-        "tasks": [
-          "Prepare family and friend shot list",
-          "Confirm golden hour outdoor portrait timing",
-          "Review high-resolution delivery rights"
-        ],
-        "questionsToAsk": [
-          "How soon are sneak peek photos available?",
-          "Do you have backup camera bodies and audio recorders?"
+          "Are all light cables recessed or flush-covered with heavy-duty cord ramps?",
+          "How do you secure floral installations against coastal rooftop breezes?"
         ],
         "status": "researching",
         "notes": "",
@@ -428,53 +185,53 @@
     "personalizedIdeas": [
       {
         "id": "idea_1",
-        "title": "Sculptural Metallic Balloon Archway",
-        "description": "Organic asymmetrical arch mixing matte lilac, rose gold chrome, and clear confetti spheres.",
-        "category": "Visual Statement",
+        "title": "Botanical Palette Tasting Bar",
+        "description": "A signature bar serving bespoke drinks infused with lavender, coral hibiscus, and white tea, visually reflecting the event color palette.",
+        "category": "Beverages",
         "estimatedCost": 25000,
-        "reason": "Instant photogenic centerpiece for arrival moments.",
-        "isFavorite": true
+        "reason": "Enhances the multi-course tasting feel with visual alignment to the Lilac, Soft Coral, and Ivory color scheme.",
+        "isFavorite": false
       },
       {
         "id": "idea_2",
-        "title": "Interactive Midnight Dessert Wall",
-        "description": "A backlit peg wall featuring artisanal glazed treats and personalized congratulatory notes.",
-        "category": "Culinary Experience",
-        "estimatedCost": 20000,
-        "reason": "Engaging sweet-treat station that delights guests late in the evening.",
+        "title": "Universal Seating & Tactile Menu Cards",
+        "description": "Low-height luxury seating clusters with embedded subtle ambient floor markers, plus soft-textured, high-contrast printed menus for effortless reading.",
+        "category": "Accessibility & Decor",
+        "estimatedCost": 12000,
+        "reason": "Fulfills universal accessibility design without compromising on sleek modern chic aesthetics.",
         "isFavorite": false
       },
       {
         "id": "idea_3",
-        "title": "Personalized Celebration Trivia Duel",
-        "description": "Curated 10-question mobile trivia about the guest of honor with playful prize pins.",
+        "title": "Sunset Jazz & Saxophone Welcome",
+        "description": "Live continuous jazz sets during golden hour transitioning into warm vocal standards during the multi-course dinner.",
         "category": "Entertainment",
-        "estimatedCost": 5000,
-        "reason": "Breaks the ice and connects disparate friend groups instantly.",
-        "isFavorite": true
+        "estimatedCost": 40000,
+        "reason": "Directly delivers on the target atmosphere vision of a minimalist rooftop with sophisticated live jazz.",
+        "isFavorite": false
       }
     ],
     "risks": [
       {
-        "description": "Potential seasonal weather changes for outdoor elements",
-        "mitigation": "Reserve clear-top canopy or confirm indoor alternate salon 72 hours prior."
+        "description": "High seasonal demand in Goa on Dec 26 leading to venue and vendor price inflation or double bookings.",
+        "mitigation": "Lock contracts, venue lock-in fees, and vendor agreements at least 6 to 7 months in advance with fixed price clauses."
       },
       {
-        "description": "Guest RSVP attrition or unnotified plus-ones",
-        "mitigation": "Set dietary buffer of 5% with caterer and send digital SMS reminder 5 days ahead."
+        "description": "Rooftop coastal winds affecting candle light, sound quality, or table settings.",
+        "mitigation": "Utilize weighted clear glass hurricane cylinders for candles, direction-controlled lapel microphones, and heavy ivory linens."
       },
       {
-        "description": "Peak hour vendor arrival congestion",
-        "mitigation": "Stagger vendor load-in windows in 30-minute intervals with a designated coordinator."
+        "description": "Accessibility bottlenecks at elevator or main entrance during guest arrival peak.",
+        "mitigation": "Assign dedicated concierge staff for priority elevator dispatch and ensure zero step thresholds across all rooftop transitions."
       }
     ],
     "nextActions": [
-      "Review and lock initial venue deposits",
-      "Finalize catering menu tasting schedule",
-      "Share personalized invitation copy with co-hosts"
+      "Shortlist top 3 accessible rooftop venues in Goa offering views and elevator access.",
+      "Schedule introductory briefing call with boutique local caterers specializing in tasting menus.",
+      "Lock in 2026 calendar dates with target live jazz quartet."
     ],
     "guests": [],
-    "createdAt": "2026-10-27T16:10:49.844Z",
-    "updatedAt": "2026-10-27T16:10:49.844Z"
+    "createdAt": "2026-10-27T17:19:30.926Z",
+    "updatedAt": "2026-10-27T17:22:53.255Z"
   }
 ]
