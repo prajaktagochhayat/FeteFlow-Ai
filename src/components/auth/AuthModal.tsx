@@ -10,8 +10,6 @@ import {
   EyeOff,
   AlertCircle,
   CheckCircle2,
-  Database,
-  ShieldCheck,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { BrandLogo } from '../common/BrandLogo';
@@ -29,7 +27,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   defaultMode = 'signin',
   onSuccess,
 }) => {
-  const { signIn, signUp, isSupabase } = useAuth();
+  const { signIn, signUp } = useAuth();
   const [mode, setMode] = useState<'signin' | 'signup'>(defaultMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -111,21 +109,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 ? 'Sign in to access your bespoke celebrations, budgets, and guest rosters.'
                 : 'Join FêteFlow AI to orchestrate unforgettable events with isolated private data.'}
             </p>
-          </div>
-
-          {/* Database & Cloud Connection Indicator */}
-          <div className="flex items-center justify-center gap-2 rounded-xl bg-brand-soft/40 px-3 py-1.5 text-[11px] text-brand-deep font-semibold">
-            {isSupabase ? (
-              <>
-                <Database className="h-3.5 w-3.5 text-emerald-500" />
-                <span>Connected to Supabase PostgreSQL (Live Auth & RLS)</span>
-              </>
-            ) : (
-              <>
-                <ShieldCheck className="h-3.5 w-3.5 text-brand-primary" />
-                <span>Isolated Workspace Account (Ready for Supabase)</span>
-              </>
-            )}
           </div>
 
           {/* Mode Switcher Tabs */}
