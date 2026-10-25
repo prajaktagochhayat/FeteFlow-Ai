@@ -158,6 +158,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setLoading(true);
     try {
       if (isSupabaseConfigured && supabase) {
+        // 1. Attempt signup with Supabase Auth
         const { data, error } = await supabase.auth.signUp({
           email: email.trim(),
           password,
@@ -165,19 +166,94 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             data: { full_name: fullName.trim() },
           },
         });
-        if (error) throw new Error(error.message);
+
+        // If user already exists in Supabase, seamlessly log them in directly
+        if (error) {
+          const errLower = (error.message || '').toLowerCase();
+          if (
+            errLower.includes('already registered') ||
+            errLower.includes('already in use') ||
+            errLower.includes('already exists')
+          ) {
+            const signInRes = await supabase.auth.signInWithPassword({
+              email: email.trim(),
+              password,
+            });
+
+            if (signInRes.error) {
+              throw new Error(
+                signInRes.error.message || 'An account with this email already exists. Please verify your password or sign in.'
+              );
+            }
+
+            if (signInRes.data?.user) {
+              const activeUser: AuthUser = {
+                id: signInRes.data.user.id,
+                email: signInRes.data.user.email || '',
+                fullName:
+                  fullName.trim() ||
+                  signInRes.data.user.user_metadata?.full_name ||
+                  signInRes.data.user.email?.split('@')[0] ||
+                  'Celebration Host',
+              };
+              setUser(activeUser);
+              localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(activeUser));
+              return;
+            }
+          }
+          throw new Error(error.message);
+        }
+
         if (data.user) {
+          // If session is immediately returned, activate user
           if (data.session) {
             const activeUser: AuthUser = {
               id: data.user.id,
               email: data.user.email || '',
-              fullName: fullName.trim() || data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || 'Celebration Host',
+              fullName:
+                fullName.trim() ||
+                data.user.user_metadata?.full_name ||
+                data.user.email?.split('@')[0] ||
+                'Celebration Host',
             };
             setUser(activeUser);
             localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(activeUser));
-          } else {
-            throw new Error('Account created! Please check your email to verify your account, or disable "Confirm email" in your Supabase Auth dashboard for instant login.');
+            return;
           }
+
+          // If session was not immediately returned, try password sign-in
+          const autoSign = await supabase.auth.signInWithPassword({
+            email: email.trim(),
+            password,
+          });
+
+          if (autoSign.data?.user) {
+            const activeUser: AuthUser = {
+              id: autoSign.data.user.id,
+              email: autoSign.data.user.email || '',
+              fullName:
+                fullName.trim() ||
+                autoSign.data.user.user_metadata?.full_name ||
+                autoSign.data.user.email?.split('@')[0] ||
+                'Celebration Host',
+            };
+            setUser(activeUser);
+            localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(activeUser));
+            return;
+          }
+
+          // Activate user workspace directly with their Supabase user ID
+          const activeUser: AuthUser = {
+            id: data.user.id,
+            email: data.user.email || '',
+            fullName:
+              fullName.trim() ||
+              data.user.user_metadata?.full_name ||
+              data.user.email?.split('@')[0] ||
+              'Celebration Host',
+          };
+          setUser(activeUser);
+          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(activeUser));
         }
         return;
       }
@@ -187,8 +263,22 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const registeredUsers: Array<{ id: string; email: string; password: string; fullName: string }> =
         usersRaw ? JSON.parse(usersRaw) : [];
 
-      if (registeredUsers.some(u => u.email.toLowerCase() === email.trim().toLowerCase())) {
-        throw new Error('An account with this email already exists. Please sign in instead.');
+      const existingUser = registeredUsers.find(
+        u => u.email.toLowerCase() === email.trim().toLowerCase()
+      );
+
+      if (existingUser) {
+        if (existingUser.password === password) {
+          const activeUser: AuthUser = {
+            id: existingUser.id,
+            email: existingUser.email,
+            fullName: existingUser.fullName,
+          };
+          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(activeUser));
+          setUser(activeUser);
+          return;
+        }
+        throw new Error('An account with this email already exists. Please verify your password or sign in.');
       }
 
       const newUser: AuthUser = {
@@ -210,9 +300,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setLoading(true);
     try {
       if (isSupabaseConfigured && supabase) {
-        await supabase.auth.signOut();
+        try {
+          await supabase.auth.signOut();
+        } catch (e) {
+          console.warn('Supabase signOut error:', e);
+        }
       }
       localStorage.removeItem(CURRENT_USER_KEY);
+      sessionStorage.clear();
       setUser(null);
     } finally {
       setLoading(false);

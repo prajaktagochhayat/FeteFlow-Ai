@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   X,
   Sparkles,
@@ -37,6 +37,57 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
+  const hideTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Clear all form credentials and state every time modal opens or closes
+  useEffect(() => {
+    setEmail('');
+    setPassword('');
+    setFullName('');
+    setError(null);
+    setSuccessMessage(null);
+    setShowPassword(false);
+    if (isOpen) {
+      setMode(defaultMode);
+    }
+    return () => {
+      if (hideTimerRef.current) {
+        clearTimeout(hideTimerRef.current);
+      }
+    };
+  }, [isOpen, defaultMode]);
+
+  // Handle switching between Sign In and Create Account tabs
+  const handleSwitchMode = (newMode: 'signin' | 'signup') => {
+    setMode(newMode);
+    setPassword('');
+    setError(null);
+    setSuccessMessage(null);
+    setShowPassword(false);
+    if (hideTimerRef.current) {
+      clearTimeout(hideTimerRef.current);
+    }
+  };
+
+  // Momentary "One View" password peek:
+  // Shows while mouse/finger is pressed down or for 1.2s on click, then automatically disappears
+  const triggerPeekPassword = () => {
+    if (hideTimerRef.current) {
+      clearTimeout(hideTimerRef.current);
+    }
+    setShowPassword(true);
+    hideTimerRef.current = setTimeout(() => {
+      setShowPassword(false);
+    }, 1200);
+  };
+
+  const endPeekPassword = () => {
+    if (hideTimerRef.current) {
+      clearTimeout(hideTimerRef.current);
+    }
+    setShowPassword(false);
+  };
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -67,13 +118,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         setSuccessMessage('Welcome back to FêteFlow!');
       } else {
         await signUp(email, password, fullName);
-        setSuccessMessage('Account created! Setting up your celebration workspace...');
+        setSuccessMessage('Welcome to FêteFlow! Directing to your workspace...');
       }
 
       setTimeout(() => {
         onSuccess?.();
         onClose();
-      }, 700);
+        setEmail('');
+        setPassword('');
+        setFullName('');
+      }, 500);
     } catch (err: any) {
       setError(err.message || 'Authentication failed. Please check your credentials.');
     } finally {
@@ -115,10 +169,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           <div className="grid grid-cols-2 gap-1 rounded-2xl border border-brand-border bg-brand-elevated/50 p-1">
             <button
               type="button"
-              onClick={() => {
-                setMode('signin');
-                setError(null);
-              }}
+              onClick={() => handleSwitchMode('signin')}
               className={`rounded-xl py-2 text-xs font-bold transition-all ${
                 mode === 'signin'
                   ? 'bg-brand-surface text-brand-primary shadow-sm'
@@ -129,10 +180,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </button>
             <button
               type="button"
-              onClick={() => {
-                setMode('signup');
-                setError(null);
-              }}
+              onClick={() => handleSwitchMode('signup')}
               className={`rounded-xl py-2 text-xs font-bold transition-all ${
                 mode === 'signup'
                   ? 'bg-brand-surface text-brand-primary shadow-sm'
@@ -159,7 +207,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           )}
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} autoComplete="off" className="space-y-4">
             {mode === 'signup' && (
               <div>
                 <label className="text-[11px] font-semibold text-brand-text-secondary uppercase">Full Name</label>
@@ -169,6 +217,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     type="text"
                     value={fullName}
                     onChange={e => setFullName(e.target.value)}
+                    autoComplete="off"
                     placeholder="e.g. Ananya Verma"
                     required
                     className="w-full rounded-xl border border-brand-border bg-brand-elevated pl-10 pr-4 py-2.5 text-xs text-brand-text focus:border-brand-primary focus:outline-none"
@@ -185,6 +234,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   type="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
+                  autoComplete="off"
                   placeholder="name@example.com"
                   required
                   className="w-full rounded-xl border border-brand-border bg-brand-elevated pl-10 pr-4 py-2.5 text-xs text-brand-text focus:border-brand-primary focus:outline-none"
@@ -200,16 +250,24 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={e => setPassword(e.target.value)}
+                  autoComplete="new-password"
                   placeholder="At least 6 characters"
                   required
                   className="w-full rounded-xl border border-brand-border bg-brand-elevated pl-10 pr-10 py-2.5 text-xs text-brand-text focus:border-brand-primary focus:outline-none"
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-2.5 text-brand-text-secondary hover:text-brand-text"
+                  tabIndex={-1}
+                  title="Click or hold to peek password"
+                  onMouseDown={triggerPeekPassword}
+                  onMouseUp={endPeekPassword}
+                  onMouseLeave={endPeekPassword}
+                  onTouchStart={triggerPeekPassword}
+                  onTouchEnd={endPeekPassword}
+                  onClick={triggerPeekPassword}
+                  className="absolute right-3.5 top-2.5 rounded-md p-0.5 text-brand-text-secondary hover:text-brand-primary transition-colors focus:outline-none"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? <Eye className="h-4 w-4 text-brand-primary" /> : <EyeOff className="h-4 w-4" />}
                 </button>
               </div>
             </div>
