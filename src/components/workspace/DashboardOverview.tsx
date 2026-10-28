@@ -32,7 +32,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
   onOpenWizard,
 }) => {
   const [hasApiKey, setHasApiKey] = useState(false);
-  const [aiModel, setAiModel] = useState('gemini-1.5-flash');
+  const [aiModel, setAiModel] = useState('gemini-flash-lite-latest');
 
   useEffect(() => {
     ApiService.getSettings()

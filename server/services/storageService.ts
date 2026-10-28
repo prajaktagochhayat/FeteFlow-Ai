@@ -19,7 +19,7 @@ export interface AppSettings {
 
 const DEFAULT_SETTINGS: AppSettings = {
   geminiApiKey: '',
-  geminiModel: 'gemini-1.5-flash',
+  geminiModel: 'gemini-flash-lite-latest',
   defaultCurrency: 'INR',
   theme: 'system',
   reducedMotion: false,

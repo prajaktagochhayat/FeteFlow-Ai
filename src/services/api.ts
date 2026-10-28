@@ -231,14 +231,21 @@ export class ApiService {
 
   // Settings
   public static async getSettings(): Promise<AppSettings> {
+    const DEPRECATED = new Set(['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro']);
     if (isStaticHosting()) {
       try {
         const saved = localStorage.getItem('feteflow_app_settings');
-        if (saved) return JSON.parse(saved);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.geminiModel && DEPRECATED.has(parsed.geminiModel)) {
+            parsed.geminiModel = 'gemini-flash-lite-latest';
+          }
+          return parsed;
+        }
       } catch {}
       return {
         geminiApiKey: '',
-        geminiModel: 'gemini-2.5-flash',
+        geminiModel: 'gemini-flash-lite-latest',
         defaultCurrency: 'INR',
         theme: 'system',
         reducedMotion: false,
@@ -247,11 +254,15 @@ export class ApiService {
 
     try {
       const res = await fetch(`${API_BASE}/settings`);
-      return await this.handleResponse<AppSettings>(res);
+      const s = await this.handleResponse<AppSettings>(res);
+      if (s.geminiModel && DEPRECATED.has(s.geminiModel)) {
+        s.geminiModel = 'gemini-flash-lite-latest';
+      }
+      return s;
     } catch {
       return {
         geminiApiKey: '',
-        geminiModel: 'gemini-2.5-flash',
+        geminiModel: 'gemini-flash-lite-latest',
         defaultCurrency: 'INR',
         theme: 'system',
         reducedMotion: false,

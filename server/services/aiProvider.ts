@@ -22,9 +22,28 @@ function formatCurrency(amount: number, currency: string = 'INR'): string {
   return `${symbol}${Math.round(amount).toLocaleString(locale)}`;
 }
 
+function cleanAndParseJSON<T = any>(rawText: string): T {
+  if (!rawText) throw new Error('Empty response from model');
+  let cleaned = rawText.trim();
+  if (cleaned.startsWith('```')) {
+    cleaned = cleaned.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+  }
+  const firstBrace = cleaned.indexOf('{');
+  const lastBrace = cleaned.lastIndexOf('}');
+  const firstBracket = cleaned.indexOf('[');
+  const lastBracket = cleaned.lastIndexOf(']');
+
+  if (firstBrace !== -1 && lastBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
+    cleaned = cleaned.slice(firstBrace, lastBrace + 1);
+  } else if (firstBracket !== -1 && lastBracket !== -1) {
+    cleaned = cleaned.slice(firstBracket, lastBracket + 1);
+  }
+  return JSON.parse(cleaned);
+}
+
 export class EventPlanningService {
   private apiKey: string | null = null;
-  private modelName: string = 'gemini-2.5-flash';
+  private modelName: string = 'gemini-flash-lite-latest';
   private client: GoogleGenerativeAI | null = null;
 
   constructor() {
@@ -33,7 +52,15 @@ export class EventPlanningService {
 
   public refreshConfig(newKey?: string, newModel?: string) {
     this.apiKey = newKey || process.env.GEMINI_API_KEY || null;
-    this.modelName = newModel || process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+
+    const DEPRECATED_MODELS = new Set([
+      'gemini-2.5-flash',
+      'gemini-2.0-flash',
+      'gemini-1.5-flash',
+      'gemini-1.5-pro'
+    ]);
+    const requestedModel = newModel || process.env.GEMINI_MODEL;
+    this.modelName = (requestedModel && !DEPRECATED_MODELS.has(requestedModel)) ? requestedModel : 'gemini-flash-lite-latest';
 
     if (this.apiKey && this.apiKey.trim().length > 0) {
       try {
@@ -57,20 +84,34 @@ export class EventPlanningService {
 
   /**
    * Resilient executor that attempts the configured model, and falls back to
-   * high-availability supported Gemini models (gemini-2.5-flash, gemini-2.0-flash, gemini-1.5-flash)
+   * high-availability supported Gemini models
    */
   private async callGemini(
     options: { responseMimeType?: string } | undefined,
     fn: (model: any) => Promise<any>
   ): Promise<any> {
     if (!this.client) throw new Error('Gemini client not initialized');
-    const candidates = [
-      this.modelName,
+
+    const DEPRECATED_MODELS = new Set([
       'gemini-2.5-flash',
       'gemini-2.0-flash',
       'gemini-1.5-flash',
       'gemini-1.5-pro'
-    ].filter(Boolean);
+    ]);
+
+    const activeModel = DEPRECATED_MODELS.has(this.modelName)
+      ? 'gemini-flash-lite-latest'
+      : this.modelName;
+
+    const candidates = [
+      activeModel,
+      'gemini-flash-lite-latest',
+      'gemini-3.5-flash',
+      'gemini-2.5-flash-lite',
+      'gemini-3.8-flash',
+      'gemini-flash-latest'
+    ].filter(m => Boolean(m) && !DEPRECATED_MODELS.has(m));
+
     const unique = Array.from(new Set(candidates));
     let lastError: any = null;
 
@@ -85,6 +126,17 @@ export class EventPlanningService {
       } catch (err: any) {
         lastError = err;
         console.warn(`Gemini attempt with model "${m}" failed:`, err?.message || err);
+
+        // If responseMimeType failed, try the same candidate without generationConfig
+        if (options?.responseMimeType) {
+          try {
+            const fallbackModel = this.client.getGenerativeModel({ model: m });
+            return await fn(fallbackModel);
+          } catch (retryErr: any) {
+            lastError = retryErr;
+            console.warn(`Gemini retry without responseMimeType for model "${m}" failed:`, retryErr?.message || retryErr);
+          }
+        }
       }
     }
     throw lastError;
@@ -159,7 +211,7 @@ JSON Structure:
           (model) => model.generateContent(prompt)
         );
         const text = result.response.text();
-        const parsed = JSON.parse(text);
+        const parsed = cleanAndParseJSON(text);
 
         const fullPlan: EventPlan = {
           id: 'evt_' + Date.now(),
@@ -287,7 +339,7 @@ Return pure JSON with this structure:
           { responseMimeType: 'application/json' },
           (model) => model.generateContent(prompt)
         );
-        const parsed = JSON.parse(result.response.text());
+        const parsed = cleanAndParseJSON(result.response.text());
         if (parsed.newAllocations && Array.isArray(parsed.newAllocations)) {
           return {
             newAllocations: parsed.newAllocations,
@@ -328,7 +380,7 @@ Return pure JSON:
           { responseMimeType: 'application/json' },
           (model) => model.generateContent(prompt)
         );
-        const parsed = JSON.parse(result.response.text());
+        const parsed = cleanAndParseJSON(result.response.text());
         const recoveryActions = parsed.recoveryActions || [];
         const updatedTimeline = event.timeline.map(t => {
           const match = (parsed.rescheduledMilestones || []).find((r: any) => r.title.toLowerCase() === t.title.toLowerCase());
@@ -388,7 +440,7 @@ Return pure JSON:
           { responseMimeType: 'application/json' },
           (model) => model.generateContent(prompt)
         );
-        const parsed = JSON.parse(result.response.text());
+        const parsed = cleanAndParseJSON(result.response.text());
         return {
           briefMarkdown: parsed.briefMarkdown || `# Vendor Brief: ${category}\n\n**Event:** ${event.name}`,
           questionsToAsk: parsed.questionsToAsk || ['What is your cancellation and reschedule policy?', 'Are travel and setup fees included?'],
@@ -429,7 +481,7 @@ Provide JSON:
           { responseMimeType: 'application/json' },
           (model) => model.generateContent(prompt)
         );
-        const parsed = JSON.parse(result.response.text());
+        const parsed = cleanAndParseJSON(result.response.text());
         return {
           formal: parsed.formal || `We cordially request your presence at ${event.name} on ${event.date}.`,
           playful: parsed.playful || `Get ready to celebrate! Join us for ${event.name} on ${event.date}!`,
