@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   Settings,
   Download,
-  RotateCcw,
   Check,
   Moon,
   Sun,
@@ -16,14 +15,13 @@ interface SettingsViewProps {
   currentTheme: 'light' | 'dark';
   onToggleTheme: () => void;
   events: EventPlan[];
-  onResetCompleted: () => void;
+  onResetCompleted?: () => void;
 }
 
 export const SettingsView: React.FC<SettingsViewProps> = ({
   currentTheme,
   onToggleTheme,
   events,
-  onResetCompleted,
 }) => {
   const [settings, setSettings] = useState<AppSettings | null>(null);
   const [currencyInput, setCurrencyInput] = useState('INR');
@@ -42,21 +40,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
     }
   };
 
-
   const handleExportWord = () => {
     exportEventsToWord(events, 'FêteFlow AI - Comprehensive Celebration Planning Dossier');
-  };
-
-  const handleResetData = async () => {
-    if (confirm('Are you sure you want to reset all celebrations to factory demo data? This will restore the initial wedding, birthday, and community fair.')) {
-      try {
-        await ApiService.resetData();
-        alert('Factory data restored successfully.');
-        onResetCompleted();
-      } catch (err: any) {
-        alert('Failed to reset: ' + err.message);
-      }
-    }
   };
 
   return (
@@ -126,14 +111,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           >
             <FileText className="h-4 w-4" />
             <span>Export Event Planning Document (Word .doc)</span>
-          </button>
-
-          <button
-            onClick={handleResetData}
-            className="flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2.5 text-xs font-semibold text-red-600 dark:text-red-400 hover:bg-red-500/20 transition-colors"
-          >
-            <RotateCcw className="h-4 w-4" />
-            <span>Restore Demo Celebrations</span>
           </button>
         </div>
       </div>
