@@ -178,7 +178,7 @@ export const AIPlannerChat: React.FC<AIPlannerChatProps> = ({ event }) => {
                     <div className="flex items-center gap-2">
                       {m.provider && (
                         <span className="rounded px-1.5 py-0.2 bg-brand-soft font-semibold text-brand-deep text-[9px]">
-                          {m.provider === 'gemini' ? 'Gemini AI' : 'Deterministic'}
+                          {m.provider === 'gemini' ? 'Gemini AI' : 'FêteFlow AI'}
                         </span>
                       )}
                       <button

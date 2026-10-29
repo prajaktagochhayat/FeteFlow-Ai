@@ -565,13 +565,9 @@ export const EventWizardModal: React.FC<EventWizardModalProps> = ({
 
                     <div className="flex items-center gap-2">
                       <span
-                        className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${
-                          providerUsed === 'gemini'
-                            ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
-                            : 'bg-amber-500/20 text-amber-600 dark:text-amber-400'
-                        }`}
+                        className="rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-600 dark:text-emerald-400"
                       >
-                        {providerUsed === 'gemini' ? '✨ Live Gemini GenAI' : '⚡ Local Planner Engine'}
+                        ✨ Live Gemini GenAI
                       </span>
                     </div>
                   </div>

@@ -289,7 +289,7 @@ export const VendorHub: React.FC<VendorHubProps> = ({ event, onUpdateEvent }) =>
                     <div className="flex items-center justify-between text-xs text-brand-text-secondary">
                       <span>Estimated Market Range: <strong className="text-brand-text">{briefOutput.estimatedRange}</strong></span>
                       <span className="rounded-full bg-brand-soft px-2.5 py-0.5 text-[10px] font-bold text-brand-deep">
-                        {briefOutput.provider === 'gemini' ? '✨ Gemini AI' : '⚡ Local Planner'}
+                        {briefOutput.provider === 'gemini' ? '✨ Gemini AI' : '✨ AI Brief'}
                       </span>
                     </div>
                   </div>

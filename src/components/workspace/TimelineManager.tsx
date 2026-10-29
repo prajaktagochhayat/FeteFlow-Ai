@@ -148,7 +148,7 @@ export const TimelineManager: React.FC<TimelineManagerProps> = ({ event, onUpdat
               <span>AI Timeline Recovery Plan</span>
             </div>
             <span className="rounded-full bg-brand-soft px-3 py-0.5 text-[10px] font-bold text-brand-deep">
-              {recoveryData.provider === 'gemini' ? '✨ Gemini AI' : '⚡ Local Planner'}
+              {recoveryData.provider === 'gemini' ? '✨ Gemini AI' : '✨ AI Recovery'}
             </span>
           </div>
           <p className="text-xs text-brand-text-secondary mb-3">

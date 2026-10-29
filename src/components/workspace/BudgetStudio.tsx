@@ -227,7 +227,7 @@ export const BudgetStudio: React.FC<BudgetStudioProps> = ({ event, onUpdateEvent
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-brand-primary">AI Rebalance Proposal</span>
               <span className="rounded-full bg-brand-soft px-2 py-0.5 text-[10px] font-semibold text-brand-deep">
-                {proposedResult.provider === 'gemini' ? '✨ Gemini AI' : '⚡ Local Planner'}
+                {proposedResult.provider === 'gemini' ? '✨ Gemini AI' : '✨ AI Rebalance'}
               </span>
             </div>
             <p className="mt-1 text-xs text-brand-text">{proposedResult.explanation}</p>

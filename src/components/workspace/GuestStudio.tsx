@@ -203,9 +203,6 @@ export const GuestStudio: React.FC<GuestStudioProps> = ({ event, onUpdateEvent }
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="rounded-full bg-brand-soft px-3 py-1 text-[10px] font-bold text-brand-deep">
-              {invitations?.provider === 'gemini' ? '✨ Gemini AI' : '⚡ Local Planner'}
-            </span>
             <button
               onClick={handleGenerateInvitations}
               disabled={generatingInvites}
