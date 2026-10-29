@@ -156,6 +156,14 @@ const MainApp: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col font-sans transition-colors duration-200">
+      {/* Accessible Skip Link for Screen Readers & Keyboard Navigation */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999999] focus:rounded-xl focus:bg-brand-primary focus:px-4 focus:py-2 focus:text-white focus:shadow-lg focus:outline-none"
+      >
+        Skip to main content
+      </a>
+
       {/* Global Top Navbar */}
       <Navbar
         onOpenWizard={handleOpenWizard}
@@ -200,7 +208,7 @@ const MainApp: React.FC = () => {
           </div>
 
           {/* Workspace Tab Content */}
-          <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+          <main id="main-content" tabIndex={-1} role="main" aria-label="Celebration Workspace" className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
             <div className="mx-auto max-w-7xl">
               {/* Mobile workspace sub-nav */}
               <div className="mb-4 flex items-center justify-between overflow-x-auto pb-2 md:hidden border-b border-brand-border">

@@ -57,7 +57,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   return (
-    <aside className="flex h-full w-full flex-col border-r border-brand-border bg-brand-surface p-4 transition-colors duration-200 overflow-y-auto overflow-x-hidden">
+    <aside role="navigation" aria-label="Workspace Navigation" className="flex h-full w-full flex-col border-r border-brand-border bg-brand-surface p-4 transition-colors duration-200 overflow-y-auto overflow-x-hidden">
       {/* Brand Header */}
       <div className="shrink-0 mb-3 flex items-center justify-between pb-3 border-b border-brand-border/60">
         <BrandLogo size="sm" showTagline={false} />
@@ -137,7 +137,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Main Navigation List */}
-      <nav className="shrink-0 space-y-1">
+      <nav role="tablist" aria-label="Workspace Navigation Tabs" className="shrink-0 space-y-1">
         {navItems.map(item => {
           const Icon = item.icon;
           const isActive = currentTab === item.id;

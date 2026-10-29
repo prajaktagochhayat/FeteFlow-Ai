@@ -41,7 +41,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-brand-border/60 bg-brand-bg/85 backdrop-blur-md transition-colors duration-200">
+    <header role="banner" aria-label="Top Navigation Bar" className="sticky top-0 z-40 border-b border-brand-border/60 bg-brand-bg/85 backdrop-blur-md transition-colors duration-200">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Brand Logo */}
         <button
@@ -53,7 +53,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Desktop Navigation Links */}
         {!isInWorkspace && (
-          <nav className="hidden items-center gap-7 md:flex">
+          <nav role="navigation" aria-label="Main Navigation" className="hidden items-center gap-7 md:flex">
             <button
               onClick={() => onNavigateLandingSection('discover')}
               className="text-sm font-medium text-brand-text-secondary transition-colors hover:text-brand-primary"
