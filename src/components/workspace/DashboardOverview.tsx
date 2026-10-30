@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, memo } from 'react';
 import {
   Sparkles,
   Banknote,
@@ -23,7 +23,7 @@ interface DashboardOverviewProps {
   onOpenWizard: () => void;
 }
 
-export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
+export const DashboardOverview: React.FC<DashboardOverviewProps> = memo(({
   event,
   onNavigateTab,
   onUpdateEvent,
@@ -353,4 +353,5 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
       </div>
     </div>
   );
-};
+});
+DashboardOverview.displayName = "DashboardOverview";

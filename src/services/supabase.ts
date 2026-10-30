@@ -21,16 +21,43 @@ export const supabase: SupabaseClient | null = isSupabaseConfigured
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null;
 
+/**
+ * Strongly typed database row interface matching Supabase 'celebrations' schema
+ */
+export interface CelebrationRow {
+  id: string;
+  user_id?: string;
+  name: string;
+  event_type: string;
+  date: string;
+  location?: string;
+  guest_count?: number;
+  setting?: string;
+  duration?: string;
+  priorities?: string[];
+  atmosphere_vision?: string;
+  event_concept?: EventPlan['eventConcept'];
+  budget?: EventPlan['budget'];
+  timeline?: EventPlan['timeline'];
+  vendor_checklist?: EventPlan['vendorChecklist'];
+  personalized_ideas?: EventPlan['personalizedIdeas'];
+  risks?: EventPlan['risks'];
+  next_actions?: EventPlan['nextActions'];
+  guests?: EventPlan['guests'];
+  created_at?: string;
+  updated_at?: string;
+}
+
 // Helper to convert database row (snake_case) to client model (camelCase)
-function mapRowToEventPlan(row: any): EventPlan {
+function mapRowToEventPlan(row: CelebrationRow): EventPlan {
   return {
     id: row.id,
     name: row.name,
-    eventType: row.event_type,
+    eventType: row.event_type as EventPlan['eventType'],
     date: row.date,
     location: row.location || '',
     guestCount: row.guest_count || 1,
-    setting: row.setting || 'undecided',
+    setting: (row.setting as EventPlan['setting']) || 'undecided',
     duration: row.duration || '1 Day',
     priorities: row.priorities || [],
     atmosphereVision: row.atmosphere_vision || '',
@@ -53,15 +80,15 @@ function mapRowToEventPlan(row: any): EventPlan {
     risks: row.risks || [],
     nextActions: row.next_actions || [],
     guests: row.guests || [],
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
+    createdAt: row.created_at || new Date().toISOString(),
+    updatedAt: row.updated_at || new Date().toISOString(),
   };
 }
 
 // Helper to convert client model to database row
-function mapEventPlanToRow(userId: string, plan: EventPlan): any {
+function mapEventPlanToRow(userId: string, plan: EventPlan): CelebrationRow {
   const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId);
-  const row: any = {
+  const row: CelebrationRow = {
     id: plan.id || 'evt_' + Date.now(),
     name: plan.name,
     event_type: plan.eventType,
@@ -115,7 +142,7 @@ export class CelebrationDataService {
         console.error('Supabase getCelebrations error:', error);
         throw new Error(error.message);
       }
-      return (data || []).map(mapRowToEventPlan);
+      return ((data as CelebrationRow[]) || []).map(mapRowToEventPlan);
     }
 
     // Local Multi-User Storage Fallback
@@ -150,7 +177,7 @@ export class CelebrationDataService {
         console.error('Supabase createCelebration error:', error);
         throw new Error(error.message);
       }
-      return mapRowToEventPlan(data);
+      return mapRowToEventPlan(data as CelebrationRow);
     }
 
     // Local Storage Fallback
@@ -169,7 +196,7 @@ export class CelebrationDataService {
     updates: Partial<EventPlan>
   ): Promise<EventPlan> {
     if (isSupabaseConfigured && supabase) {
-      const dbUpdates: any = { updated_at: new Date().toISOString() };
+      const dbUpdates: Partial<CelebrationRow> = { updated_at: new Date().toISOString() };
       if (updates.name !== undefined) dbUpdates.name = updates.name;
       if (updates.eventType !== undefined) dbUpdates.event_type = updates.eventType;
       if (updates.date !== undefined) dbUpdates.date = updates.date;
@@ -199,12 +226,12 @@ export class CelebrationDataService {
         console.error('Supabase updateCelebration error:', error);
         throw new Error(error.message);
       }
-      return mapRowToEventPlan(data);
+      return mapRowToEventPlan(data as CelebrationRow);
     }
 
     // Local Storage Fallback
     const existing = await this.getCelebrations(userId);
-    let target = existing.find(e => e.id === id);
+    const target = existing.find(e => e.id === id);
     if (!target) {
       throw new Error('Celebration not found');
     }

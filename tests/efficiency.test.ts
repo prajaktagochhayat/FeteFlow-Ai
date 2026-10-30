@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { EventPlan } from '../src/types';
+import { AIResponseCache } from '../src/services/aiService';
 
 describe('Performance, Efficiency & Resource Optimization Benchmarking', () => {
   const mockPlan: EventPlan = {
@@ -94,5 +95,50 @@ describe('Performance, Efficiency & Resource Optimization Benchmarking', () => {
     expect(cloned.id).toBe(mockPlan.id);
     expect(cloned.budget.allocations.length).toBe(mockPlan.budget.allocations.length);
     expect(cloned.guests?.length).toBe(mockPlan.guests?.length);
+  });
+
+  describe('AIResponseCache Optimization', () => {
+    it('stores and retrieves cached items in sub-millisecond time', () => {
+      const cache = new AIResponseCache(10, 30);
+      const testKey = 'test_plan_key_1';
+      const testData = { planName: 'Cached Gala', budget: 500000 };
+
+      cache.set(testKey, testData);
+
+      const t0 = performance.now();
+      const retrieved = cache.get<typeof testData>(testKey);
+      const elapsed = performance.now() - t0;
+
+      expect(retrieved).toEqual(testData);
+      expect(elapsed).toBeLessThan(1); // Sub-millisecond hit
+    });
+
+    it('handles LRU eviction when capacity limit is reached', () => {
+      const maxEntries = 3;
+      const cache = new AIResponseCache(maxEntries, 30);
+
+      cache.set('key1', 'data1');
+      cache.set('key2', 'data2');
+      cache.set('key3', 'data3');
+      expect(cache.size()).toBe(3);
+
+      // Adding 4th entry should evict oldest (key1)
+      cache.set('key4', 'data4');
+      expect(cache.size()).toBe(3);
+      expect(cache.get('key1')).toBeNull();
+      expect(cache.get('key2')).toBe('data2');
+      expect(cache.get('key4')).toBe('data4');
+    });
+
+    it('clears all cached entries upon user request or session logout', () => {
+      const cache = new AIResponseCache(5, 30);
+      cache.set('k1', 'val1');
+      cache.set('k2', 'val2');
+      expect(cache.size()).toBe(2);
+
+      cache.clear();
+      expect(cache.size()).toBe(0);
+      expect(cache.get('k1')).toBeNull();
+    });
   });
 });

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, memo } from 'react';
 import {
   Users,
   CheckCircle2,
@@ -24,7 +24,7 @@ interface GuestStudioProps {
   onUpdateEvent: (updates: Partial<EventPlan>) => void;
 }
 
-export const GuestStudio: React.FC<GuestStudioProps> = ({ event, onUpdateEvent }) => {
+export const GuestStudio: React.FC<GuestStudioProps> = memo(({ event, onUpdateEvent }) => {
   const [showAddGuest, setShowAddGuest] = useState(false);
   const [newGuestName, setNewGuestName] = useState('');
   const [newGuestEmail, setNewGuestEmail] = useState('');
@@ -599,4 +599,5 @@ export const GuestStudio: React.FC<GuestStudioProps> = ({ event, onUpdateEvent }
       )}
     </div>
   );
-};
+});
+GuestStudio.displayName = "GuestStudio";

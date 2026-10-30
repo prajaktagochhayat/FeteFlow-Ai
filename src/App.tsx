@@ -1,25 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Navbar } from './components/navigation/Navbar';
 import { Sidebar } from './components/navigation/Sidebar';
-import { LandingPage } from './components/landing/LandingPage';
 import { CustomCursor } from './components/common/CustomCursor';
 import { EventWizardModal } from './components/wizard/EventWizardModal';
 import { AuthModal } from './components/auth/AuthModal';
 import { AuthProvider, useAuth } from './context/AuthContext';
-
-// Workspace Studios
-import { DashboardOverview } from './components/workspace/DashboardOverview';
-import { EventsList } from './components/workspace/EventsList';
-import { BudgetStudio } from './components/workspace/BudgetStudio';
-import { TimelineManager } from './components/workspace/TimelineManager';
-import { VendorHub } from './components/workspace/VendorHub';
-import { GuestStudio } from './components/workspace/GuestStudio';
-import { InspirationStudio } from './components/workspace/InspirationStudio';
-import { AIPlannerChat } from './components/workspace/AIPlannerChat';
-import { SettingsView } from './components/workspace/SettingsView';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { LoadingSkeleton } from './components/common/LoadingSkeleton';
 
 import { EventPlan, WorkspaceTab } from './types';
 import { ApiService } from './services/api';
+
+// Dynamic Code-Splitting: Lazy load workspace modules for optimal bundle size and first contentful paint
+const LandingPage = lazy(() => import('./components/landing/LandingPage').then(m => ({ default: m.LandingPage })));
+const DashboardOverview = lazy(() => import('./components/workspace/DashboardOverview').then(m => ({ default: m.DashboardOverview })));
+const EventsList = lazy(() => import('./components/workspace/EventsList').then(m => ({ default: m.EventsList })));
+const BudgetStudio = lazy(() => import('./components/workspace/BudgetStudio').then(m => ({ default: m.BudgetStudio })));
+const TimelineManager = lazy(() => import('./components/workspace/TimelineManager').then(m => ({ default: m.TimelineManager })));
+const VendorHub = lazy(() => import('./components/workspace/VendorHub').then(m => ({ default: m.VendorHub })));
+const GuestStudio = lazy(() => import('./components/workspace/GuestStudio').then(m => ({ default: m.GuestStudio })));
+const InspirationStudio = lazy(() => import('./components/workspace/InspirationStudio').then(m => ({ default: m.InspirationStudio })));
+const AIPlannerChat = lazy(() => import('./components/workspace/AIPlannerChat').then(m => ({ default: m.AIPlannerChat })));
+const SettingsView = lazy(() => import('./components/workspace/SettingsView').then(m => ({ default: m.SettingsView })));
+
+const getErrorMessage = (err: unknown): string => {
+  if (err instanceof Error) return err.message;
+  return String(err);
+};
 
 const MainApp: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
@@ -56,7 +63,7 @@ const MainApp: React.FC = () => {
   // Events State
   const [events, setEvents] = useState<EventPlan[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<EventPlan | null>(null);
-  const [loadingEvents, setLoadingEvents] = useState(true);
+  const [, setLoadingEvents] = useState(true);
 
   // Fetch events for active user session
   const loadEvents = async () => {
@@ -74,8 +81,8 @@ const MainApp: React.FC = () => {
       } else {
         setSelectedEvent(null);
       }
-    } catch (err) {
-      console.error('Failed to load events:', err);
+    } catch (err: unknown) {
+      console.error('Failed to load events:', getErrorMessage(err));
     } finally {
       setLoadingEvents(false);
     }
@@ -98,8 +105,8 @@ const MainApp: React.FC = () => {
       const updated = await ApiService.updateEvent(selectedEvent.id, updates);
       setSelectedEvent(updated);
       setEvents(prev => prev.map(e => (e.id === updated.id ? updated : e)));
-    } catch (err: any) {
-      alert('Failed to update event: ' + err.message);
+    } catch (err: unknown) {
+      alert('Failed to update event: ' + getErrorMessage(err));
     }
   };
 
@@ -111,8 +118,8 @@ const MainApp: React.FC = () => {
       if (selectedEvent?.id === id) {
         setSelectedEvent(remaining[0] || null);
       }
-    } catch (err: any) {
-      alert('Failed to delete event: ' + err.message);
+    } catch (err: unknown) {
+      alert('Failed to delete event: ' + getErrorMessage(err));
     }
   };
 
@@ -181,11 +188,15 @@ const MainApp: React.FC = () => {
       {/* Main View Area */}
       {viewMode === 'landing' ? (
         <main className="flex-1">
-          <LandingPage
-            onOpenWizard={handleOpenWizard}
-            onSelectDemoEvent={handleSelectDemoEvent}
-            demoEvents={events}
-          />
+          <ErrorBoundary fallbackTitle="Error loading Landing Page">
+            <Suspense fallback={<LoadingSkeleton label="Loading FêteFlow AI Experience..." />}>
+              <LandingPage
+                onOpenWizard={handleOpenWizard}
+                onSelectDemoEvent={handleSelectDemoEvent}
+                demoEvents={events}
+              />
+            </Suspense>
+          </ErrorBoundary>
         </main>
       ) : (
         /* Workspace View with Sidebar */
@@ -236,88 +247,92 @@ const MainApp: React.FC = () => {
                 </button>
               </div>
 
-              {currentTab === 'settings' ? (
-                <SettingsView
-                  currentTheme={theme}
-                  onToggleTheme={toggleTheme}
-                  events={events}
-                  onResetCompleted={loadEvents}
-                />
-              ) : currentTab === 'events' ? (
-                <EventsList
-                  events={events}
-                  selectedEvent={selectedEvent}
-                  onSelectEvent={setSelectedEvent}
-                  onOpenWizard={() => setIsWizardOpen(true)}
-                  onDeleteEvent={handleDeleteEvent}
-                />
-              ) : selectedEvent ? (
-                <>
-                  {currentTab === 'overview' && (
-                    <DashboardOverview
-                      event={selectedEvent}
-                      onNavigateTab={setCurrentTab}
-                      onUpdateEvent={handleUpdateEvent}
+              <ErrorBoundary fallbackTitle="Error loading workspace module" onReset={loadEvents}>
+                <Suspense fallback={<LoadingSkeleton label={`Loading ${currentTab.toUpperCase()} studio...`} />}>
+                  {currentTab === 'settings' ? (
+                    <SettingsView
+                      currentTheme={theme}
+                      onToggleTheme={toggleTheme}
+                      events={events}
+                      onResetCompleted={loadEvents}
+                    />
+                  ) : currentTab === 'events' ? (
+                    <EventsList
+                      events={events}
+                      selectedEvent={selectedEvent}
+                      onSelectEvent={setSelectedEvent}
                       onOpenWizard={() => setIsWizardOpen(true)}
+                      onDeleteEvent={handleDeleteEvent}
                     />
-                  )}
+                  ) : selectedEvent ? (
+                    <>
+                      {currentTab === 'overview' && (
+                        <DashboardOverview
+                          event={selectedEvent}
+                          onNavigateTab={setCurrentTab}
+                          onUpdateEvent={handleUpdateEvent}
+                          onOpenWizard={() => setIsWizardOpen(true)}
+                        />
+                      )}
 
-                  {currentTab === 'ai-planner' && (
-                    <AIPlannerChat event={selectedEvent} />
-                  )}
+                      {currentTab === 'ai-planner' && (
+                        <AIPlannerChat event={selectedEvent} />
+                      )}
 
-                  {currentTab === 'budget' && (
-                    <BudgetStudio
-                      event={selectedEvent}
-                      onUpdateEvent={handleUpdateEvent}
-                    />
-                  )}
+                      {currentTab === 'budget' && (
+                        <BudgetStudio
+                          event={selectedEvent}
+                          onUpdateEvent={handleUpdateEvent}
+                        />
+                      )}
 
-                  {currentTab === 'timeline' && (
-                    <TimelineManager
-                      event={selectedEvent}
-                      onUpdateEvent={handleUpdateEvent}
-                    />
-                  )}
+                      {currentTab === 'timeline' && (
+                        <TimelineManager
+                          event={selectedEvent}
+                          onUpdateEvent={handleUpdateEvent}
+                        />
+                      )}
 
-                  {currentTab === 'vendors' && (
-                    <VendorHub
-                      event={selectedEvent}
-                      onUpdateEvent={handleUpdateEvent}
-                    />
-                  )}
+                      {currentTab === 'vendors' && (
+                        <VendorHub
+                          event={selectedEvent}
+                          onUpdateEvent={handleUpdateEvent}
+                        />
+                      )}
 
-                  {currentTab === 'guests' && (
-                    <GuestStudio
-                      event={selectedEvent}
-                      onUpdateEvent={handleUpdateEvent}
-                    />
-                  )}
+                      {currentTab === 'guests' && (
+                        <GuestStudio
+                          event={selectedEvent}
+                          onUpdateEvent={handleUpdateEvent}
+                        />
+                      )}
 
-                  {currentTab === 'inspiration' && (
-                    <InspirationStudio
-                      event={selectedEvent}
-                      onUpdateEvent={handleUpdateEvent}
-                    />
+                      {currentTab === 'inspiration' && (
+                        <InspirationStudio
+                          event={selectedEvent}
+                          onUpdateEvent={handleUpdateEvent}
+                        />
+                      )}
+                    </>
+                  ) : (
+                    <div className="mx-auto my-12 max-w-xl rounded-3xl border border-brand-border bg-brand-surface p-10 text-center shadow-sm">
+                      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-primary/10 text-brand-primary">
+                        <span className="text-3xl">✨</span>
+                      </div>
+                      <h3 className="font-serif text-2xl font-bold text-brand-text">Your Celebration Workspace is Ready</h3>
+                      <p className="mt-2 text-sm text-brand-text-secondary leading-relaxed">
+                        Start a brand-new celebration tailored to your dates, guests, and Indian Rupee budget ceiling. Powered live by your connected Gemini GenAI.
+                      </p>
+                      <button
+                        onClick={handleOpenWizard}
+                        className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-brand-primary px-8 py-3.5 text-xs font-bold text-white shadow-lg shadow-brand-primary/25 transition-all hover:bg-brand-primary-hover hover:scale-[1.02] active:scale-[0.98]"
+                      >
+                        <span>✦ Plan Celebration with AI</span>
+                      </button>
+                    </div>
                   )}
-                </>
-              ) : (
-                <div className="mx-auto my-12 max-w-xl rounded-3xl border border-brand-border bg-brand-surface p-10 text-center shadow-sm">
-                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-primary/10 text-brand-primary">
-                    <span className="text-3xl">✨</span>
-                  </div>
-                  <h3 className="font-serif text-2xl font-bold text-brand-text">Your Celebration Workspace is Ready</h3>
-                  <p className="mt-2 text-sm text-brand-text-secondary leading-relaxed">
-                    Start a brand-new celebration tailored to your dates, guests, and Indian Rupee budget ceiling. Powered live by your connected Gemini GenAI.
-                  </p>
-                  <button
-                    onClick={handleOpenWizard}
-                    className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-brand-primary px-8 py-3.5 text-xs font-bold text-white shadow-lg shadow-brand-primary/25 transition-all hover:bg-brand-primary-hover hover:scale-[1.02] active:scale-[0.98]"
-                  >
-                    <span>✦ Plan Celebration with AI</span>
-                  </button>
-                </div>
-              )}
+                </Suspense>
+              </ErrorBoundary>
             </div>
           </main>
         </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, memo } from 'react';
 import {
   Clock,
   CheckCircle2,
@@ -20,7 +20,7 @@ interface TimelineManagerProps {
   onUpdateEvent: (updates: Partial<EventPlan>) => void;
 }
 
-export const TimelineManager: React.FC<TimelineManagerProps> = ({ event, onUpdateEvent }) => {
+export const TimelineManager: React.FC<TimelineManagerProps> = memo(({ event, onUpdateEvent }) => {
   const [filterStatus, setFilterStatus] = useState<'all' | 'upcoming' | 'overdue' | 'completed'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isRecovering, setIsRecovering] = useState(false);
@@ -405,4 +405,5 @@ export const TimelineManager: React.FC<TimelineManagerProps> = ({ event, onUpdat
       )}
     </div>
   );
-};
+});
+TimelineManager.displayName = "TimelineManager";

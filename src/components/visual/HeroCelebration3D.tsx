@@ -603,6 +603,17 @@ export const HeroCelebration3D: React.FC = () => {
       if (renderer.domElement && container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
       }
+      // Complete GPU memory reclamation: traverse and dispose all geometries and materials
+      scene.traverse((object: THREE.Object3D) => {
+        if (object instanceof THREE.Mesh) {
+          if (object.geometry) object.geometry.dispose();
+          if (Array.isArray(object.material)) {
+            object.material.forEach((mat: THREE.Material) => mat.dispose());
+          } else if (object.material) {
+            object.material.dispose();
+          }
+        }
+      });
       renderer.dispose();
     };
   }, []);

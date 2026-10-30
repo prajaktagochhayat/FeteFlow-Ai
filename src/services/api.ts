@@ -1,6 +1,6 @@
 import { EventPlan, EventWizardInput, AppSettings, BudgetAllocationItem, TimelineMilestone } from '../types';
 import { CelebrationDataService } from './supabase';
-import { clientAiService } from './aiService';
+import { clientAiService, AIProviderStatus } from './aiService';
 
 const API_BASE = '/api';
 
@@ -41,7 +41,7 @@ export class ApiService {
     }
     try {
       const res = await fetch(`${API_BASE}/health`);
-      return await this.handleResponse<{ status: string; ai: any }>(res);
+      return await this.handleResponse<{ status: string; ai: AIProviderStatus }>(res);
     } catch {
       return { status: 'ok', ai: clientAiService.getStatus() };
     }

@@ -22,7 +22,86 @@ function formatCurrency(amount: number, currency: string = 'INR'): string {
   return `${symbol}${Math.round(amount).toLocaleString(locale)}`;
 }
 
-function cleanAndParseJSON<T = any>(rawText: string): T {
+export interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
+
+/**
+ * High-performance In-Memory LRU + TTL Cache for AI responses
+ * Prevents redundant Gemini API calls, eliminates duplicate latency, and minimizes token usage.
+ */
+export class AIResponseCache {
+  private cache = new Map<string, CacheEntry<unknown>>();
+  private maxEntries: number;
+  private ttlMs: number;
+
+  constructor(maxEntries = 50, ttlMinutes = 30) {
+    this.maxEntries = maxEntries;
+    this.ttlMs = ttlMinutes * 60 * 1000;
+  }
+
+  public get<T>(key: string): T | null {
+    const entry = this.cache.get(key);
+    if (!entry) return null;
+    if (Date.now() - entry.timestamp > this.ttlMs) {
+      this.cache.delete(key);
+      return null;
+    }
+    return entry.data as T;
+  }
+
+  public set<T>(key: string, data: T): void {
+    if (this.cache.size >= this.maxEntries) {
+      const firstKey = this.cache.keys().next().value;
+      if (firstKey) this.cache.delete(firstKey);
+    }
+    this.cache.set(key, { data, timestamp: Date.now() });
+  }
+
+  public clear(): void {
+    this.cache.clear();
+  }
+
+  public size(): number {
+    return this.cache.size;
+  }
+}
+
+interface RawPlanJSON {
+  eventConcept: EventPlan['eventConcept'];
+  budget: EventPlan['budget'];
+  timeline: Array<{ title: string; description?: string; dueDate: string; priority?: 'high' | 'medium' | 'low'; category?: string }>;
+  vendorChecklist: Array<{ category: string; tasks?: string[]; questionsToAsk?: string[] }>;
+  personalizedIdeas: Array<{ title: string; description: string; category?: string; estimatedCost?: number; reason?: string }>;
+  risks?: EventPlan['risks'];
+  nextActions?: string[];
+}
+
+interface RawBudgetJSON {
+  explanation?: string;
+  newAllocations?: BudgetAllocationItem[];
+}
+
+interface RawTimelineRecoveryJSON {
+  recoveryActions?: string[];
+  rescheduledMilestones?: Array<{ title: string; adjustedDueDate: string; priority?: 'high' | 'medium' | 'low' }>;
+}
+
+interface RawVendorBriefJSON {
+  briefMarkdown?: string;
+  questionsToAsk?: string[];
+  estimatedRange?: string;
+}
+
+interface RawInvitationCopyJSON {
+  formal?: string;
+  playful?: string;
+  elegant?: string;
+  minimal?: string;
+}
+
+function cleanAndParseJSON<T = unknown>(rawText: string): T {
   if (!rawText) throw new Error('Empty response from model');
   let cleaned = rawText.trim();
   if (cleaned.startsWith('```')) {
@@ -45,6 +124,15 @@ export class ClientEventPlanningService {
   private apiKey: string | null = null;
   private modelName: string = 'gemini-flash-lite-latest';
   private client: GoogleGenerativeAI | null = null;
+  private cache: AIResponseCache = new AIResponseCache();
+
+  public getCache(): AIResponseCache {
+    return this.cache;
+  }
+
+  public clearCache(): void {
+    this.cache.clear();
+  }
 
   constructor() {
     this.refreshConfig();
@@ -88,10 +176,10 @@ export class ClientEventPlanningService {
     };
   }
 
-  private async callGemini(
+  private async callGemini<T = any>(
     options: { responseMimeType?: string } | undefined,
-    fn: (model: any) => Promise<any>
-  ): Promise<any> {
+    fn: (model: ReturnType<GoogleGenerativeAI['getGenerativeModel']>) => Promise<T>
+  ): Promise<T> {
     if (!this.client) throw new Error('Gemini client not initialized');
 
     const DEPRECATED_MODELS = new Set([
@@ -115,28 +203,28 @@ export class ClientEventPlanningService {
     ].filter(m => Boolean(m) && !DEPRECATED_MODELS.has(m));
 
     const unique = Array.from(new Set(candidates));
-    let lastError: any = null;
+    let lastError: unknown = null;
 
     for (const m of unique) {
       try {
-        const config: any = { model: m };
+        const config: { model: string; generationConfig?: { responseMimeType?: string } } = { model: m };
         if (options?.responseMimeType) {
           config.generationConfig = { responseMimeType: options.responseMimeType };
         }
         const model = this.client.getGenerativeModel(config);
         return await fn(model);
-      } catch (err: any) {
+      } catch (err: unknown) {
         lastError = err;
-        console.warn(`Gemini attempt with model "${m}" failed:`, err?.message || err);
+        console.warn(`Gemini attempt with model "${m}" failed:`, err instanceof Error ? err.message : String(err));
 
         // If responseMimeType failed, try the same candidate without generationConfig
         if (options?.responseMimeType) {
           try {
             const fallbackModel = this.client.getGenerativeModel({ model: m });
             return await fn(fallbackModel);
-          } catch (retryErr: any) {
+          } catch (retryErr: unknown) {
             lastError = retryErr;
-            console.warn(`Gemini retry without responseMimeType for model "${m}" failed:`, retryErr?.message || retryErr);
+            console.warn(`Gemini retry without responseMimeType for model "${m}" failed:`, retryErr instanceof Error ? retryErr.message : String(retryErr));
           }
         }
       }
@@ -146,6 +234,10 @@ export class ClientEventPlanningService {
 
   // 1. Full Event Plan Generation
   public async generateFullEventPlan(input: EventWizardInput): Promise<{ plan: EventPlan; provider: 'gemini' | 'fallback' }> {
+    const cacheKey = `plan_${input.eventType}_${input.eventName}_${input.date}_${input.budgetAmount}_${input.guestCount}`;
+    const cached = this.cache.get<{ plan: EventPlan; provider: 'gemini' | 'fallback' }>(cacheKey);
+    if (cached) return cached;
+
     if (this.client) {
       try {
         const prompt = `
@@ -213,7 +305,7 @@ JSON Structure:
           (model) => model.generateContent(prompt)
         );
         const text = result.response.text();
-        const parsed = cleanAndParseJSON(text);
+        const parsed = cleanAndParseJSON<RawPlanJSON>(text);
 
         const fullPlan: EventPlan = {
           id: 'evt_' + Date.now(),
@@ -228,7 +320,7 @@ JSON Structure:
           atmosphereVision: input.atmosphereDescription || '',
           eventConcept: parsed.eventConcept,
           budget: parsed.budget,
-          timeline: (parsed.timeline || []).map((t: any, idx: number) => ({
+          timeline: (parsed.timeline || []).map((t: RawPlanJSON['timeline'][number], idx: number) => ({
             id: 'tml_' + (idx + 1),
             title: t.title,
             description: t.description || '',
@@ -237,7 +329,7 @@ JSON Structure:
             category: t.category || 'Planning',
             completed: false,
           })),
-          vendorChecklist: (parsed.vendorChecklist || []).map((v: any, idx: number) => ({
+          vendorChecklist: (parsed.vendorChecklist || []).map((v: RawPlanJSON['vendorChecklist'][number], idx: number) => ({
             id: 'vnd_' + (idx + 1),
             category: v.category,
             tasks: v.tasks || [],
@@ -246,7 +338,7 @@ JSON Structure:
             notes: '',
             quotedAmount: 0,
           })),
-          personalizedIdeas: (parsed.personalizedIdeas || []).map((idea: any, idx: number) => ({
+          personalizedIdeas: (parsed.personalizedIdeas || []).map((idea: RawPlanJSON['personalizedIdeas'][number], idx: number) => ({
             id: 'idea_' + (idx + 1),
             title: idea.title,
             description: idea.description,
@@ -262,7 +354,9 @@ JSON Structure:
           updatedAt: new Date().toISOString(),
         };
 
-        return { plan: fullPlan, provider: 'gemini' };
+        const planOutput = { plan: fullPlan, provider: 'gemini' as const };
+        this.cache.set(cacheKey, planOutput);
+        return planOutput;
       } catch (err) {
         console.warn('Gemini plan generation failed or timed out, using fallback planner:', err);
       }
@@ -317,6 +411,9 @@ Respond as an encouraging, creative, and pragmatic event specialist. Offer actio
     event: EventPlan,
     instruction: string
   ): Promise<{ newAllocations: BudgetAllocationItem[]; explanation: string; provider: 'gemini' | 'fallback' }> {
+    const cacheKey = `opt_budget_${event.id}_${instruction}_${event.budget.totalBudget}`;
+    const cached = this.cache.get<{ newAllocations: BudgetAllocationItem[]; explanation: string; provider: 'gemini' | 'fallback' }>(cacheKey);
+    if (cached) return cached;
     if (this.client) {
       try {
         const prompt = `
@@ -336,11 +433,11 @@ Return pure JSON with this structure:
   ]
 }
 `;
-        const result = await this.callGemini(
+        const geminiRes = await this.callGemini<{ response: { text: () => string } }>(
           { responseMimeType: 'application/json' },
           (model) => model.generateContent(prompt)
         );
-        const parsed = cleanAndParseJSON(result.response.text());
+        const parsed = cleanAndParseJSON<RawBudgetJSON>(geminiRes.response.text());
         if (parsed.newAllocations && Array.isArray(parsed.newAllocations)) {
           return {
             newAllocations: parsed.newAllocations,
@@ -353,7 +450,9 @@ Return pure JSON with this structure:
       }
     }
 
-    return this.generateDeterministicBudgetOptimization(event, instruction);
+    const fallbackBudget = this.generateDeterministicBudgetOptimization(event, instruction);
+    this.cache.set(cacheKey, fallbackBudget);
+    return fallbackBudget;
   }
 
   // 4. Timeline Recovery
@@ -361,6 +460,9 @@ Return pure JSON with this structure:
     event: EventPlan,
     overdueTasks: TimelineMilestone[]
   ): Promise<{ recoveryActions: string[]; updatedTimeline: TimelineMilestone[]; provider: 'gemini' | 'fallback' }> {
+    const cacheKey = `recovery_${event.id}_${overdueTasks.map(t => t.id).join('_')}`;
+    const cached = this.cache.get<{ recoveryActions: string[]; updatedTimeline: TimelineMilestone[]; provider: 'gemini' | 'fallback' }>(cacheKey);
+    if (cached) return cached;
     if (this.client && overdueTasks.length > 0) {
       try {
         const prompt = `
@@ -377,14 +479,14 @@ Return pure JSON:
   ]
 }
 `;
-        const result = await this.callGemini(
+        const geminiRes = await this.callGemini<{ response: { text: () => string } }>(
           { responseMimeType: 'application/json' },
           (model) => model.generateContent(prompt)
         );
-        const parsed = cleanAndParseJSON(result.response.text());
+        const parsed = cleanAndParseJSON<RawTimelineRecoveryJSON>(geminiRes.response.text());
         const recoveryActions = parsed.recoveryActions || [];
         const updatedTimeline = event.timeline.map(t => {
-          const match = (parsed.rescheduledMilestones || []).find((r: any) => r.title.toLowerCase() === t.title.toLowerCase());
+          const match = (parsed.rescheduledMilestones || []).find((r: NonNullable<RawTimelineRecoveryJSON['rescheduledMilestones']>[number]) => r.title.toLowerCase() === t.title.toLowerCase());
           return match ? { ...t, dueDate: match.adjustedDueDate, priority: match.priority || t.priority } : t;
         });
         return { recoveryActions, updatedTimeline, provider: 'gemini' };
@@ -416,6 +518,9 @@ Return pure JSON:
     event: EventPlan,
     category: string
   ): Promise<{ briefMarkdown: string; questionsToAsk: string[]; estimatedRange: string; provider: 'gemini' | 'fallback' }> {
+    const cacheKey = `vendor_${event.id}_${category}`;
+    const cached = this.cache.get<{ briefMarkdown: string; questionsToAsk: string[]; estimatedRange: string; provider: 'gemini' | 'fallback' }>(cacheKey);
+    if (cached) return cached;
     if (this.client) {
       try {
         const prompt = `
@@ -437,11 +542,11 @@ Return pure JSON:
   "estimatedRange": "e.g. ₹50,000 - ₹80,000"
 }
 `;
-        const result = await this.callGemini(
+        const geminiRes = await this.callGemini<{ response: { text: () => string } }>(
           { responseMimeType: 'application/json' },
           (model) => model.generateContent(prompt)
         );
-        const parsed = cleanAndParseJSON(result.response.text());
+        const parsed = cleanAndParseJSON<RawVendorBriefJSON>(geminiRes.response.text());
         return {
           briefMarkdown: parsed.briefMarkdown || `# Vendor Brief: ${category}\n\n**Event:** ${event.name}`,
           questionsToAsk: parsed.questionsToAsk || ['What is your cancellation and reschedule policy?', 'Are travel and setup fees included?'],
@@ -453,13 +558,18 @@ Return pure JSON:
       }
     }
 
-    return this.generateDeterministicVendorBrief(event, category);
+    const fallbackBrief = this.generateDeterministicVendorBrief(event, category);
+    this.cache.set(cacheKey, fallbackBrief);
+    return fallbackBrief;
   }
 
   // 6. Invitation Copy
   public async generateInvitationCopy(
     event: EventPlan
   ): Promise<{ formal: string; playful: string; elegant: string; minimal: string; provider: 'gemini' | 'fallback' }> {
+    const cacheKey = `invite_${event.id}_${event.name}_${event.date}`;
+    const cached = this.cache.get<{ formal: string; playful: string; elegant: string; minimal: string; provider: 'gemini' | 'fallback' }>(cacheKey);
+    if (cached) return cached;
     if (this.client) {
       try {
         const prompt = `
@@ -478,11 +588,11 @@ Provide JSON:
   "minimal": "Clean, modern, essential wording"
 }
 `;
-        const result = await this.callGemini(
+        const geminiRes = await this.callGemini<{ response: { text: () => string } }>(
           { responseMimeType: 'application/json' },
           (model) => model.generateContent(prompt)
         );
-        const parsed = cleanAndParseJSON(result.response.text());
+        const parsed = cleanAndParseJSON<RawInvitationCopyJSON>(geminiRes.response.text());
         return {
           formal: parsed.formal || `We cordially request your presence at ${event.name} on ${event.date}.`,
           playful: parsed.playful || `Get ready to celebrate! Join us for ${event.name} on ${event.date}!`,

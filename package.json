@@ -14,7 +14,8 @@
     "start": "node server/dist/index.js",
     "test": "vitest run",
     "test:coverage": "vitest run",
-    "test:unit": "vitest run tests/"
+    "test:unit": "vitest run tests/",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

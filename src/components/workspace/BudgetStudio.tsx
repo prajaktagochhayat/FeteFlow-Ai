@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, memo } from 'react';
 import {
   Banknote,
   PieChart as PieIcon,
@@ -21,7 +21,7 @@ interface BudgetStudioProps {
   onUpdateEvent: (updates: Partial<EventPlan>) => void;
 }
 
-export const BudgetStudio: React.FC<BudgetStudioProps> = ({ event, onUpdateEvent }) => {
+export const BudgetStudio: React.FC<BudgetStudioProps> = memo(({ event, onUpdateEvent }) => {
   const [optimizerQuery, setOptimizerQuery] = useState('');
   const [optimizing, setOptimizing] = useState(false);
   const [proposedResult, setProposedResult] = useState<{
@@ -501,4 +501,5 @@ export const BudgetStudio: React.FC<BudgetStudioProps> = ({ event, onUpdateEvent
       )}
     </div>
   );
-};
+});
+BudgetStudio.displayName = "BudgetStudio";
